@@ -1,11 +1,12 @@
 """Minimal coding agent loop — one tool: bash."""
 import json, sys, subprocess
 import requests
+import os
 
 
-LLM_BASE_URL = "http://ip:port/v1"
-LLM_API_KEY = "..."
-LLM_MODEL = "..."
+LLM_BASE_URL = "https://api.deepseek.com"
+LLM_API_KEY = os.environ["DEEPSEEK_API_KEY"]
+LLM_MODEL = "deepseek-flash"
 LLM_HEADERS = {"Content-Type": "application/json", "Authorization": f"Bearer {LLM_API_KEY}"}
 MAX_TURNS = 1000
 
@@ -55,8 +56,15 @@ def call_tool(name: str, arguments: dict) -> str:
 
 
 def call_llm(messages):
-    payload = {"model": LLM_MODEL, "messages": messages, "tools": LLM_TOOLS, "tool_choice": "auto",
-               "temperature": 0.1, "max_tokens": 4096}
+    payload = {
+        "model": LLM_MODEL,
+        "messages": messages,
+        "tools": LLM_TOOLS,
+        "tool_choice": "auto",
+        "thinking": {"type": "disabled"},
+        "temperature": 0.1,
+        "max_tokens": 4096,
+    }
     llm_http_response = requests.post(f"{LLM_BASE_URL}/chat/completions", json=payload, headers=LLM_HEADERS)
     llm_http_response.raise_for_status()
     msg = llm_http_response.json()["choices"][0]["message"]
