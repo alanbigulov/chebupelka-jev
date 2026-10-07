@@ -2,14 +2,16 @@
 
 К концу первой учебной сессии агент подключён к DeepSeek, выполняет один инструмент `bash` и возвращает пользователю ответ. Мы получили код автора через объединение двух историй Git, создали отдельное Python-окружение и проверили полный цикл на команде `pwd`.
 
-Этот конспект сохраняет фактический ход сессии. В исторических командах встречается имя `chebupelka.py`. В версии `v0.1.0` файл называется [chebupelkajev.py](../../chebupelkajev.py), а имя проекта в [pyproject.toml](../../pyproject.toml) и [uv.lock](../../uv.lock) равно `chebupelkajev`. Адреса GitHub и имя локальной папки сохранены.
+Этот конспект сохраняет фактический ход сессии. В исторических командах встречается имя `chebupelka.py`. В версии `v0.1.0` файл называется [chebupelkajev.py](https://github.com/alanbigulov/chebupelka-jev/blob/f6108317f85553eb6acdec7dc94fe13ba115b367/chebupelkajev.py), а имя проекта в [pyproject.toml](https://github.com/alanbigulov/chebupelka-jev/blob/f6108317f85553eb6acdec7dc94fe13ba115b367/pyproject.toml) и [uv.lock](https://github.com/alanbigulov/chebupelka-jev/blob/f6108317f85553eb6acdec7dc94fe13ba115b367/uv.lock) равно `chebupelkajev`. Адреса GitHub и имя локальной папки сохранены.
+
+[Паспорт v0.1.0](version.md) закрепляет SHA, зависимости и директорию запуска. Для повторения команд запуска используй отдельный detached worktree этого снимка.
 
 | Ссылка | Назначение |
 |---|---|
 | [Навигация по обучению](../README.md) | Порядок чтения и следующие занятия |
 | [Урок 2. Архитектура](02-agent-architecture.md) | Компоненты и движение данных |
 | [Урок 3. Разбор кода](03-code-walkthrough.md) | Объяснение каждой части программы |
-| [Код именно v0.1.0](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.0/chebupelkajev.py) | Закреплённая версия для этого урока |
+| [Код именно v0.1.0](https://github.com/alanbigulov/chebupelka-jev/blob/f6108317f85553eb6acdec7dc94fe13ba115b367/chebupelkajev.py) | Закреплённая версия для этого урока |
 | [Правила версий](../../VERSIONING.md) | Как оформлять следующие состояния проекта |
 | [План учебных улучшений](../development-roadmap.md) | Ограничения и работа следующих версий |
 
@@ -419,7 +421,7 @@ Python 3.14.7
  M uv.lock
 ```
 
-`.venv` не появилась в статусе, потому что [`.gitignore`](../../.gitignore) исключает её из Git. В репозитории сохраняют требования и lock-файл, а окружение воспроизводят на каждой машине.
+`.venv` не появилась в статусе, потому что [`.gitignore`](https://github.com/alanbigulov/chebupelka-jev/blob/f6108317f85553eb6acdec7dc94fe13ba115b367/.gitignore) исключает её из Git. В репозитории сохраняют требования и lock-файл, а окружение воспроизводят на каждой машине.
 
 ## 10. Почему изменился `uv.lock`
 
@@ -475,7 +477,7 @@ LLM_API_KEY = os.environ["DEEPSEEK_API_KEY"]
 LLM_MODEL = "deepseek-flash"
 ```
 
-Это же содержимое находится в [настройках текущего файла](../../chebupelkajev.py). Ключ не записан в код. `os.environ` читает переменные процесса, а квадратные скобки требуют присутствия нужной переменной. Если её нет, Python выбрасывает `KeyError` при загрузке модуля.
+Это же содержимое находится в [настройках файла v0.1.0](https://github.com/alanbigulov/chebupelka-jev/blob/f6108317f85553eb6acdec7dc94fe13ba115b367/chebupelkajev.py). Ключ не записан в код. `os.environ` читает переменные процесса, а квадратные скобки требуют присутствия нужной переменной. Если её нет, Python выбрасывает `KeyError` при загрузке модуля.
 
 В `call_llm()` добавили параметр:
 
@@ -699,7 +701,9 @@ git log --oneline --graph --all --decorate
 
 ## 17. Как повторять изучение без смешивания версий
 
-Для практической работы открывай [локальный файл](../../chebupelkajev.py). Для проверки утверждений этого урока после будущих изменений используй [файл по тегу v0.1.0](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.0/chebupelkajev.py) или `git show`.
+Для чтения используй [исходник снимка v0.1.0](https://github.com/alanbigulov/chebupelka-jev/blob/f6108317f85553eb6acdec7dc94fe13ba115b367/chebupelkajev.py) или `git show`. Ссылки на код и конфигурацию закреплены полным SHA коммита, поэтому перенос файлов в следующих версиях не изменит материал урока.
+
+Команды запуска и проверки v0.1.0 выполняй из корня отдельного detached worktree этой версии. Порядок создания рабочей копии записан в [паспорте снимка](version.md). Исторические команды получения кода и старое имя `chebupelka.py` выше описывают состоявшуюся сессию; после переименования запускать нужно `chebupelkajev.py` из снимка v0.1.0.
 
 При следующем улучшении сначала выбираем пункт из [roadmap](../development-roadmap.md), объясняем изменение и критерий проверки, затем вносим код и фиксируем новый результат. Уроки этой папки сохраняют описание v0.1.0.
 
@@ -717,7 +721,7 @@ git log --oneline --graph --all --decorate
 
 - [Исходный репозиторий автора](https://github.com/alexey-goloburdin/chebupelka).
 - [README своего проекта](../../README.md).
-- [Требования Python по тегу v0.1.0](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.0/pyproject.toml).
+- [Требования Python по тегу v0.1.0](https://github.com/alanbigulov/chebupelka-jev/blob/f6108317f85553eb6acdec7dc94fe13ba115b367/pyproject.toml).
 - [Документация `uv`: проекты](https://docs.astral.sh/uv/guides/projects/).
 - [Документация DeepSeek](https://api-docs.deepseek.com/).
 - [Документация DeepSeek о режиме рассуждений](https://api-docs.deepseek.com/guides/thinking_mode/).

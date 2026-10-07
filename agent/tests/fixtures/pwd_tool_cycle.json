@@ -1,0 +1,32 @@
+[
+  {
+    "choices": [
+      {
+        "message": {
+          "role": "assistant",
+          "content": "Проверю текущую директорию.",
+          "tool_calls": [
+            {
+              "id": "synthetic-call-pwd-001",
+              "type": "function",
+              "function": {
+                "name": "bash",
+                "arguments": "{\"command\": \"pwd\"}"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "choices": [
+      {
+        "message": {
+          "role": "assistant",
+          "content": "Синтетический финальный ответ: команда pwd завершена."
+        }
+      }
+    ]
+  }
+]

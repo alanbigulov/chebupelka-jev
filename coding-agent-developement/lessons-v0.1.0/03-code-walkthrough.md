@@ -2,7 +2,9 @@
 
 Мы проследим тот же путь, который уже наблюдали в терминале: получение задачи, первый запрос модели, выполнение `pwd`, отправка результата и итоговый ответ. Каждое Python-выражение связано с действием программы.
 
-Основной источник, [chebupelkajev.py](../../chebupelkajev.py), содержит 107 строк в версии v0.1.0. Для сохранения соответствия после будущих изменений используй [копию по тегу v0.1.0](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.0/chebupelkajev.py). Многострочные фрагменты ниже иногда развёрнуты для чтения без изменения выражений.
+Основной источник, [chebupelkajev.py из снимка v0.1.0](https://github.com/alanbigulov/chebupelka-jev/blob/f6108317f85553eb6acdec7dc94fe13ba115b367/chebupelkajev.py), содержит 107 строк. Ссылка закреплена полным SHA коммита выпуска. Многострочные фрагменты ниже иногда развёрнуты для чтения без изменения выражений.
+
+Команды запуска и проверки выполняй из корня отдельного detached worktree v0.1.0. Его создание, окружение и SHA указаны в [паспорте снимка](version.md).
 
 ```text
 Строки 102–107: получить задачу
@@ -69,7 +71,7 @@ MAX_TURNS = 1000
 
 ## 2. Почему нижний блок срабатывает при запуске, но не при импорте
 
-Точка запуска находится в [строках 102–107](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.0/chebupelkajev.py#L102):
+Точка запуска находится в [строках 102–107](https://github.com/alanbigulov/chebupelka-jev/blob/f6108317f85553eb6acdec7dc94fe13ba115b367/chebupelkajev.py#L102):
 
 ```python
 if __name__ == "__main__":
@@ -187,7 +189,7 @@ if not prompt.strip():
 agent_loop(prompt)
 ```
 
-Начало функции, [строка 76](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.0/chebupelkajev.py#L76):
+Начало функции, [строка 76](https://github.com/alanbigulov/chebupelka-jev/blob/f6108317f85553eb6acdec7dc94fe13ba115b367/chebupelkajev.py#L76):
 
 ```python
 def agent_loop(user_message: str) -> None:
@@ -269,7 +271,7 @@ content_example, tool_calls_example = example_result
 
 ## 8. Как `call_llm()` собирает запрос
 
-В [строках 58–67](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.0/chebupelkajev.py#L58):
+В [строках 58–67](https://github.com/alanbigulov/chebupelka-jev/blob/f6108317f85553eb6acdec7dc94fe13ba115b367/chebupelkajev.py#L58):
 
 ```python
 def call_llm(messages):
@@ -448,7 +450,7 @@ API arguments --> json.loads() --> словарь --> call_tool()
 
 ## 14. Как `call_tool()` выбирает функцию
 
-В [строках 48–55](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.0/chebupelkajev.py#L48):
+В [строках 48–55](https://github.com/alanbigulov/chebupelka-jev/blob/f6108317f85553eb6acdec7dc94fe13ba115b367/chebupelkajev.py#L48):
 
 ```python
 def call_tool(name: str, arguments: dict) -> str:
@@ -503,7 +505,7 @@ run_bash(command="pwd")
 
 ## 16. Где запускается команда на компьютере
 
-В [строках 39–45](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.0/chebupelkajev.py#L39):
+В [строках 39–45](https://github.com/alanbigulov/chebupelka-jev/blob/f6108317f85553eb6acdec7dc94fe13ba115b367/chebupelkajev.py#L39):
 
 ```python
 def run_bash(command: str) -> str:
@@ -570,7 +572,7 @@ Exit code: 0
 
 ## 18. Как результат попадает в память беседы
 
-Возвращаемся в `agent_loop()` к [строкам 97–98](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.0/chebupelkajev.py#L97):
+Возвращаемся в `agent_loop()` к [строкам 97–98](https://github.com/alanbigulov/chebupelka-jev/blob/f6108317f85553eb6acdec7dc94fe13ba115b367/chebupelkajev.py#L97):
 
 ```python
 messages.append({
@@ -643,7 +645,7 @@ content, tool_calls = call_llm(messages)
 
 ## 20. Что происходит при достижении предела
 
-После цикла есть [строка 99](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.0/chebupelkajev.py#L99):
+После цикла есть [строка 99](https://github.com/alanbigulov/chebupelka-jev/blob/f6108317f85553eb6acdec7dc94fe13ba115b367/chebupelkajev.py#L99):
 
 ```python
 print(f"\n⚠️  Max turns ({MAX_TURNS}) reached. Stopping.")
@@ -715,11 +717,11 @@ PY
 5. Почему `returncode=1` и исключение `TimeoutExpired` идут по разным веткам?
 6. Где нужно менять код, чтобы добавить новый инструмент, и какую схему необходимо согласовать с ним?
 
-Для изучения будущих изменений сначала выбираем один пункт [roadmap](../development-roadmap.md). Новую реализацию и её проверку связываем с новой версией, сохраняя этот разбор как материал для [v0.1.0](https://github.com/alanbigulov/chebupelka-jev/tree/v0.1.0).
+Для изучения будущих изменений сначала выбираем один пункт [roadmap](../development-roadmap.md). Новую реализацию и её проверку связываем с новой версией, сохраняя этот разбор как материал для [v0.1.0](https://github.com/alanbigulov/chebupelka-jev/tree/f6108317f85553eb6acdec7dc94fe13ba115b367).
 
 ## Источники
 
-- [Полный исходник v0.1.0](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.0/chebupelkajev.py).
+- [Полный исходник v0.1.0](https://github.com/alanbigulov/chebupelka-jev/blob/f6108317f85553eb6acdec7dc94fe13ba115b367/chebupelkajev.py).
 - [Python: `sys.argv`](https://docs.python.org/3/library/sys.html#sys.argv).
 - [Python: `__main__`](https://docs.python.org/3/library/__main__.html).
 - [Python: `json`](https://docs.python.org/3/library/json.html).

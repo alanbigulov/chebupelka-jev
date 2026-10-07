@@ -25,14 +25,14 @@ agent_loop() --> call_llm() --+--> DeepSeek API              |
 
 | Материал | Где смотреть |
 |---|---|
-| Текущие исходники | [chebupelkajev.py](../../chebupelkajev.py) |
-| Исходники для этого урока | [chebupelkajev.py по тегу v0.1.0](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.0/chebupelkajev.py) |
+| Паспорт снимка | [Версия, SHA и окружение](version.md) |
+| Исходники для этого урока | [chebupelkajev.py по тегу v0.1.0](https://github.com/alanbigulov/chebupelka-jev/blob/f6108317f85553eb6acdec7dc94fe13ba115b367/chebupelkajev.py) |
 | Подготовка проекта | [Урок 1](01-setup-and-history.md) |
 | Строки Python и синтаксис | [Урок 3](03-code-walkthrough.md) |
 | Запланированные изменения | [development-roadmap.md](../development-roadmap.md) |
 | Навигация | [README обучения](../README.md) |
 
-Номера строк ниже относятся к файлу из `v0.1.0`. Относительная ссылка открывает рабочий файл, который может измениться при дальнейшем развитии. Ссылки на GitHub с `v0.1.0` сохраняют привязку к изучаемой версии.
+Номера строк и структура ниже относятся к `v0.1.0`. Ссылки на код закреплены полным SHA коммита выпуска и открывают именно этот снимок. Команды запуска и проверки выполняй из корня отдельного detached worktree v0.1.0, как описано в [паспорте](version.md).
 
 ## 1. Из каких частей состоит репозиторий
 
@@ -71,7 +71,7 @@ chebupelka-jev/                         сохранённое имя локал
 
 ## 2. Кто за что отвечает
 
-Основные определения находятся в [исходном файле](../../chebupelkajev.py):
+Основные определения находятся в [исходном файле](https://github.com/alanbigulov/chebupelka-jev/blob/f6108317f85553eb6acdec7dc94fe13ba115b367/chebupelkajev.py):
 
 | Часть | Строка начала v0.1.0 | Ответственность | Возвращаемые данные |
 |---|---:|---|---|
@@ -148,7 +148,7 @@ tool       --> что вернуло локальное выполнение
 
 ## 5. Как описание инструмента попадает к модели
 
-В [`LLM_TOOLS`, строки 26–36](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.0/chebupelkajev.py#L26) описан один инструмент:
+В [`LLM_TOOLS`, строки 26–36](https://github.com/alanbigulov/chebupelka-jev/blob/f6108317f85553eb6acdec7dc94fe13ba115b367/chebupelkajev.py#L26) описан один инструмент:
 
 ```json
 {
@@ -186,7 +186,7 @@ call_tool() --> локальное соответствие "bash": run_bash
 
 ## 6. Как устроен обмен с DeepSeek
 
-[`call_llm()`, строки 58–73](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.0/chebupelkajev.py#L58), создаёт `payload`, отправляет POST-запрос, проверяет HTTP-статус и возвращает две части ответа.
+[`call_llm()`, строки 58–73](https://github.com/alanbigulov/chebupelka-jev/blob/f6108317f85553eb6acdec7dc94fe13ba115b367/chebupelkajev.py#L58), создаёт `payload`, отправляет POST-запрос, проверяет HTTP-статус и возвращает две части ответа.
 
 ```text
 Python-словарь payload
@@ -253,7 +253,7 @@ HTTP JSON
 
 ## 8. Выполнение команды и границы процесса
 
-[`run_bash()`, строки 39–45](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.0/chebupelkajev.py#L39), вызывает:
+[`run_bash()`, строки 39–45](https://github.com/alanbigulov/chebupelka-jev/blob/f6108317f85553eb6acdec7dc94fe13ba115b367/chebupelkajev.py#L39), вызывает:
 
 ```python
 subprocess.run(
@@ -447,6 +447,6 @@ tool:      result B
 
 Рабочие статусы и критерии каждого улучшения ведутся в [development-roadmap.md](../development-roadmap.md). Правила новых тегов находятся в [VERSIONING.md](../../VERSIONING.md).
 
-Для самопроверки найди в [коде v0.1.0](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.0/chebupelkajev.py): место отправки истории, место фактического запуска команды и условие завершения. Это три разные точки выполнения, и каждая отвечает за своё действие.
+Для самопроверки найди в [коде v0.1.0](https://github.com/alanbigulov/chebupelka-jev/blob/f6108317f85553eb6acdec7dc94fe13ba115b367/chebupelkajev.py): место отправки истории, место фактического запуска команды и условие завершения. Это три разные точки выполнения, и каждая отвечает за своё действие.
 
 Следующий материал, [урок 3](03-code-walkthrough.md), разбирает Python-выражения по реальному пути теста `pwd`.
