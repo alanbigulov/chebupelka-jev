@@ -28,6 +28,7 @@
 | Пройти обучение | [Учебная навигация](coding-agent-developement/README.md) |
 | Понять структуру и причины решений | [project-structure.md](coding-agent-developement/project-structure.md) |
 | Выбрать следующую доработку | [development-roadmap.md](coding-agent-developement/development-roadmap.md) |
+| Открыть актуальные задачи и Kanban | [GitHub Project](https://github.com/users/alanbigulov/projects/4) и [правила трекинга](coding-agent-developement/project-tracking.md) |
 | Восстановить конкретный выпуск | [VERSIONING.md](VERSIONING.md) |
 | Посмотреть реализованные изменения | [CHANGELOG.md](CHANGELOG.md) |
 
