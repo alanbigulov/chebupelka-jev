@@ -1,4 +1,4 @@
-# Учебная работа над chebupelkajev
+# Учебная работа над chebu
 
 Эта папка хранит объяснения реализованного агента и план его дальнейшего развития. Текущая версия репозитория **v0.1.2**. Название `coding-agent-developement` сохраняется по решению владельца проекта. Исполняемый проект отделён в `agent/`.
 
@@ -47,7 +47,7 @@ Roadmap → выбранная задача → проверка → новая 
 
 ## Связь с кодовой базой
 
-Исходник: [agent/chebupelkajev.py](../agent/chebupelkajev.py). Метаданные: [agent/pyproject.toml](../agent/pyproject.toml). Зависимости: [agent/uv.lock](../agent/uv.lock). Проверки: [test_agent.py](../agent/tests/test_agent.py). Правила выпуска: [VERSIONING.md](../VERSIONING.md). Реализованные изменения: [CHANGELOG.md](../CHANGELOG.md).
+Исходник: [agent/chebu.py](../agent/chebu.py). Метаданные: [agent/pyproject.toml](../agent/pyproject.toml). Зависимости: [agent/uv.lock](../agent/uv.lock). Проверки: [test_agent.py](../agent/tests/test_agent.py). Правила выпуска: [VERSIONING.md](../VERSIONING.md). Реализованные изменения: [CHANGELOG.md](../CHANGELOG.md).
 
 Уроки в `lessons-v0.1.0` описывают именно выпуск `v0.1.0`. Ссылки на исторические код и настройки закреплены за его коммитом, поэтому перенос в `agent/` их не ломает. [Код по неизменяемому тегу](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.0/chebupelkajev.py) позволяет сверяться с первоначальным состоянием. Пакет v0.1.1 содержит ссылки на текущие `agent/`-файлы и на тег своего выпуска.
 

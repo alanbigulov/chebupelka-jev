@@ -54,12 +54,12 @@ gh api 'repos/alanbigulov/chebupelka-jev/issues?state=all&per_page=100'
 
 ## 3. Создание, публичность и связь с репозиторием
 
-Скрипт искал Project по точному названию `chebupelkajev — Разработка и обучение`. Если совпадение было одно, использовал его; если ни одного, создавал Project. После каждого существенного шага сохранял полученные ID для продолжения настройки.
+Скрипт искал Project по точному названию `chebu — Разработка и обучение`. Если совпадение было одно, использовал его; если ни одного, создавал Project. После каждого существенного шага сохранял полученные ID для продолжения настройки.
 
 ```bash
 # Пример первоначального создания, уже выполненного для Project 4.
 gh project create --owner alanbigulov \
-  --title 'chebupelkajev — Разработка и обучение' --format json
+  --title 'chebu — Разработка и обучение' --format json
 gh project link 4 --owner alanbigulov \
   --repo alanbigulov/chebupelka-jev
 ```
@@ -90,7 +90,7 @@ def graphql(query, **variables):
 
 projects = gh_json("project", "list", "--owner", "alanbigulov",
                    "--limit", "100", "--format", "json")["projects"]
-title = "chebupelkajev — Разработка и обучение"
+title = "chebu — Разработка и обучение"
 matches = [project for project in projects if project["title"] == title]
 assert len(matches) <= 1, "Нужно проверить дублирующиеся Projects"
 project = matches[0] if matches else gh_json(

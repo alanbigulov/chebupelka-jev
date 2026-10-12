@@ -22,10 +22,10 @@ SOFTWARE.
 
 Scope of this license
 
-This license applies to original contributions by alanbigulov to chebupelkajev,
+This license applies to original contributions by alanbigulov to chebu,
 including the project's original educational materials, tests, and changes.
 It does not relicense code or other material inherited from
 https://github.com/alexey-goloburdin/chebupelka, including the original portions
-of agent/chebupelkajev.py and the upstream Git history. The upstream repository
+of agent/chebu.py and the upstream Git history. The upstream repository
 had no stated license when checked on 2026-10-07. Permissions for those
 inherited portions must be obtained from their respective rights holders.

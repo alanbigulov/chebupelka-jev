@@ -1,8 +1,8 @@
-# Трекинг разработки и учебных материалов chebupelkajev
+# Трекинг разработки и учебных материалов chebu
 
 GitHub Issues и публичный GitHub Project являются основным трекером задач. Этот документ задаёт правила работы; актуальные состояния, обсуждения и доказательства находятся в GitHub. Учебный roadmap объясняет смысл задач и ссылается на тикеты.
 
-Проект: [chebupelkajev — Разработка и обучение](https://github.com/users/alanbigulov/projects/4). Репозиторий: https://github.com/alanbigulov/chebupelka-jev.
+Проект: [chebu — Разработка и обучение](https://github.com/users/alanbigulov/projects/4). Репозиторий: https://github.com/alanbigulov/chebupelka-jev.
 
 ## Представления одного проекта
 
