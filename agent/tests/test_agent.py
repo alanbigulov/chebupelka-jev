@@ -19,7 +19,7 @@ FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 class AgentLoopTests(unittest.TestCase):
     def setUp(self):
         spec = importlib.util.spec_from_file_location(
-            "test_target_agent", AGENT_DIR / "chebupelkajev.py"
+            "test_target_agent", AGENT_DIR / "chebu.py"
         )
         self.agent = importlib.util.module_from_spec(spec)
         with patch.dict(os.environ, {"DEEPSEEK_API_KEY": "synthetic-test-key"}):

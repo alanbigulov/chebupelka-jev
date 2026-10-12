@@ -27,7 +27,7 @@
 
 | Файл | Рабочая копия | Снимок v0.1.2 |
 |---|---|---|
-| Исходник | [chebupelkajev.py](../../agent/chebupelkajev.py) | [По тегу](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.2/agent/chebupelkajev.py) |
+| Исходник | [chebu.py](../../agent/chebu.py) | [По тегу](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.2/agent/chebupelkajev.py) |
 | Метаданные | [pyproject.toml](../../agent/pyproject.toml) | [По тегу](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.2/agent/pyproject.toml) |
 | Зависимости | [uv.lock](../../agent/uv.lock) | [По тегу](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.2/agent/uv.lock) |
 | Ветка Python | [.python-version](../../agent/.python-version) | [По тегу](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.2/agent/.python-version) |
