@@ -4,7 +4,11 @@
 
 ## [Unreleased]
 
-Изменения следующей версии пока не реализованы. План и критерии готовности ведутся в [development-roadmap.md](coding-agent-developement/development-roadmap.md).
+Исправления кода следующей версии пока не реализованы. План и критерии готовности ведутся в [development-roadmap.md](coding-agent-developement/development-roadmap.md).
+
+### Документы
+
+- После выпуска v0.1.3 локальный worktree `../chebupelkajev-v0.1.0` удалён с учебной машины: он стоял на теге v0.1.0 и не содержал изменений. README, VERSIONING и журнал структуры больше не описывают его как существующий. Снимок создаётся заново командой `git worktree add --detach ../chebupelkajev-v0.1.0 v0.1.0`; тег v0.1.0 сохранён.
 
 ## [0.1.3], 2026-10-12
 
