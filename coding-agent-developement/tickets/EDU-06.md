@@ -7,7 +7,7 @@
 | Область и тип | area:agent, type:testing |
 | Место изменения | `agent/tests/test_agent.py` |
 | Исходная база | v0.1.1 |
-| Целевая версия в трекере владельца | v0.1.4 |
+| Целевая версия в трекере владельца | v0.1.5 |
 | Issue в трекере владельца | [#6](https://github.com/alanbigulov/chebupelka-jev/issues/6) |
 
 ## Критерии готовности
