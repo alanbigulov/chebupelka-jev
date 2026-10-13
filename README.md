@@ -30,13 +30,25 @@
 | Установить и запустить текущего агента | [agent/README.md](agent/README.md) |
 | Пройти обучение | [Учебная навигация](coding-agent-developement/README.md) |
 | Работать с кодинговым агентом в любом рантайме | [AGENTS.md](AGENTS.md) и [протокол передачи сессии](.handoff/README.md) |
+| Выбрать, кто пишет код: агент или ты | [Режимы тьютора](coding-agent-developement/tutor-modes.md) |
 | Понять структуру и причины решений | [project-structure.md](coding-agent-developement/project-structure.md) |
 | Выбрать следующую доработку | [development-roadmap.md](coding-agent-developement/development-roadmap.md) |
-| Открыть актуальные задачи и Kanban | [GitHub Project](https://github.com/users/alanbigulov/projects/4) и [правила трекинга](coding-agent-developement/project-tracking.md) |
+| Выбрать задачу | [Тикеты EDU](coding-agent-developement/tickets/README.md) и [правила учёта](coding-agent-developement/project-tracking.md) |
+| Открыть трекер владельца репозитория | [GitHub Project](https://github.com/users/alanbigulov/projects/4) |
 | Восстановить конкретный выпуск | [VERSIONING.md](VERSIONING.md) |
 | Посмотреть реализованные изменения | [CHANGELOG.md](CHANGELOG.md) |
 
-## Быстрый старт
+## Начать обучение с кодинговым агентом
+
+1. Клонируй репозиторий и перейди в его корень.
+2. Запусти в корне любой из шести рантаймов: `claude`, `codex`, `opencode`, `grok`, `cursor-agent` или `devin`.
+3. Напиши агенту: «Начни учебную сессию».
+
+Агент прочитает [AGENTS.md](AGENTS.md), сообщит о первой сессии, покажет [режимы тьютора](coding-agent-developement/tutor-modes.md) и предложит выбрать [тикет](coding-agent-developement/tickets/README.md). В конце сессии агент сохранит снимок в `.handoff/`. Следующую сессию можно открыть в другом рантайме, и агент продолжит с того же места.
+
+Для учёта задач GitHub не нужен. Запросы `chebu` к DeepSeek платные и требуют твоего ключа. Локальные тесты работают без ключа.
+
+## Установить и запустить chebu
 
 В новой директории:
 
@@ -46,7 +58,7 @@ cd chebupelka-jev/agent
 uv sync --locked
 ```
 
-Нужен современный [uv](https://docs.astral.sh/uv/). Он выбирает Python 3.14 из `.python-version` и создаёт `agent/.venv`. На машине с двумя экземплярами `uv` используй проверенный `"$(brew --prefix)/bin/uv"` вместо обычного `uv`.
+Нужен [uv](https://docs.astral.sh/uv/). Он выбирает Python 3.14 из `.python-version` и создаёт `agent/.venv`. Проект проверен с uv 0.5.15 и 0.12.14.
 
 Ввод ключа DeepSeek в **zsh**:
 
@@ -85,6 +97,8 @@ chebupelka-jev/
 └── coding-agent-developement/               учебные материалы
     ├── README.md, project-structure.md
     ├── development-roadmap.md
+    ├── tutor-modes.md, project-tracking.md
+    ├── tickets/                            тексты тикетов EDU
     ├── lessons-v0.1.0/
     ├── lessons-v0.1.1/
     ├── lessons-v0.1.2/

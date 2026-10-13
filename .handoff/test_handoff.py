@@ -13,7 +13,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 PROJECT = HERE.parent
 RUNTIME_CONFIG = PROJECT / "runtime-config"
-TEMPLATE = (HERE / "TEMPLATE.md").read_text(encoding="utf-8")
+REAL_TEMPLATE = (HERE / "TEMPLATE.md").read_text(encoding="utf-8")
 MANIFEST = json.loads((RUNTIME_CONFIG / "manifest.json").read_text(encoding="utf-8"))
 RUNTIMES = {
     path.stem: json.loads(path.read_text(encoding="utf-8"))
@@ -22,9 +22,7 @@ RUNTIMES = {
 MARKERS = {name for runtime in RUNTIMES.values() for name in runtime["detect_env"]}
 
 PLACEHOLDER = re.compile(r"<[^<>\n]+>")
-HEADINGS = re.findall(r"^## (.+)$", TEMPLATE, flags=re.MULTILINE)
-METADATA_FIELDS = re.findall(r"^\| ([^|\n]+) \|", TEMPLATE.split("\n## ")[1], flags=re.MULTILINE)[1:]
-SCHEMA = re.search(r"^\| Схема \| (\d+)", TEMPLATE, flags=re.MULTILINE).group(1)
+ENUMERATION = re.compile(r"<([a-z][a-z0-9_-]*(?: / [a-z][a-z0-9_-]*)+)>")
 LINK_TARGET = re.compile(r"\]\(([^)#\s:]+)\)")
 RESUME_HEADER = "Продолжить в любом рантайме из корня основного клона:"
 
@@ -52,6 +50,37 @@ def drop_field(text: str, field: str) -> str:
     return row.sub("", text)
 
 
+def add_field(text: str, field: str, value: str) -> str:
+    rule = re.compile(r"^\|---\|---\|\n", flags=re.MULTILINE)
+    assert rule.search(text), "no metadata table in the template"
+    return rule.sub(lambda found: f"{found.group()}| {field} | {value} |\n", text, count=1)
+
+
+def metadata_rows(template: str) -> dict[str, str]:
+    rows = re.findall(r"^\| ([^|\n]+) \| (.*) \|$", template.split("\n## ")[1], flags=re.MULTILINE)
+    return dict(rows[1:])
+
+
+def enumerated_fields(template: str) -> dict[str, list[str]]:
+    found = {field: ENUMERATION.fullmatch(value.replace("`", "")) for field, value in metadata_rows(template).items()}
+    return {field: choices.group(1).split(" / ") for field, choices in found.items() if choices}
+
+
+ENUM_FIELD = "Проверочный список"
+ENUM_CHOICES = ("alpha", "beta-2", "gamma_3")
+ENUM_PLACEHOLDER = f"<{' / '.join(ENUM_CHOICES)}>"
+# The synthetic row gives every test an enumerated field, whether or not the real template defines one.
+TEMPLATE = add_field(REAL_TEMPLATE, ENUM_FIELD, f"`{ENUM_PLACEHOLDER}`")
+HEADINGS = re.findall(r"^## (.+)$", TEMPLATE, flags=re.MULTILINE)
+METADATA_FIELDS = list(metadata_rows(TEMPLATE))
+SCHEMA = re.search(r"^\| Схема \| (\d+)", TEMPLATE, flags=re.MULTILINE).group(1)
+
+
+def filler(placeholder: str) -> str:
+    choices = ENUMERATION.fullmatch(placeholder)
+    return choices.group(1).split(" / ")[0] if choices else "заполнено"
+
+
 def filled_snapshot(
     *,
     time: str = "2026-10-13T09:00:00Z",
@@ -61,7 +90,9 @@ def filled_snapshot(
     without_section: str | None = None,
     body: str = "",
 ) -> str:
-    text = PLACEHOLDER.sub(lambda found: found.group() if found.group() == unfilled else "заполнено", TEMPLATE)
+    text = PLACEHOLDER.sub(
+        lambda found: found.group() if found.group() == unfilled else filler(found.group()), TEMPLATE
+    )
     text = set_field(text, "Время снимка UTC", f"`{time}`")
     text = set_field(text, "Рантайм", f"`{runtime}`; `1.0.0`")
     if schema is not None:
@@ -105,10 +136,11 @@ class HandoffCase(unittest.TestCase):
         self.session = self.state / "SESSION.md"
         self.prepared = self.state / "SESSION.next.md"
         self.archive = self.state / "archive"
+        self.template = self.state / "TEMPLATE.md"
 
         self.state.mkdir(parents=True)
-        for name in ("handoff.py", "TEMPLATE.md"):
-            shutil.copy(HERE / name, self.state / name)
+        shutil.copy(HERE / "handoff.py", self.state / "handoff.py")
+        self.template.write_text(TEMPLATE, encoding="utf-8")
         shutil.copytree(RUNTIME_CONFIG, self.repo / "runtime-config")
         shutil.copy(PROJECT / ".gitignore", self.repo / ".gitignore")
         for target in set(LINK_TARGET.findall(TEMPLATE)):
@@ -228,6 +260,31 @@ class CheckTest(HandoffCase):
         self.assert_single_problem(
             self.check(text), "2026-10-13 09:00", f"строка {line_of(text, '| Время снимка UTC |')}:"
         )
+
+    def test_accepts_every_choice_of_enumerated_field(self) -> None:
+        for choice in ENUM_CHOICES:
+            with self.subTest(choice=choice):
+                self.assert_clean(self.check(set_field(filled_snapshot(), ENUM_FIELD, f"`{choice}`")))
+
+    def test_reports_value_outside_enumerated_field(self) -> None:
+        text = set_field(filled_snapshot(), ENUM_FIELD, "`delta`")
+        self.assert_single_problem(
+            self.check(text),
+            f"строка {line_of(text, f'| {ENUM_FIELD} |')}: поле «{ENUM_FIELD}»: значение «delta» не входит в список: "
+            + ", ".join(ENUM_CHOICES),
+        )
+
+    def test_reports_missing_enumerated_field_once(self) -> None:
+        self.assert_single_problem(self.check(drop_field(filled_snapshot(), ENUM_FIELD)), f"нет поля «{ENUM_FIELD}»")
+
+    def test_reports_unfilled_enumerated_field_once(self) -> None:
+        text = filled_snapshot(unfilled=ENUM_PLACEHOLDER)
+        self.assert_single_problem(self.check(text), f"не заполнен placeholder шаблона: {ENUM_PLACEHOLDER}")
+
+    def test_placeholder_with_prose_alternatives_is_not_an_enumeration(self) -> None:
+        field = "Проверочная подсказка"
+        self.template.write_text(add_field(TEMPLATE, field, "`<нет / конкретный остаток>`"), encoding="utf-8")
+        self.assert_clean(self.check(add_field(filled_snapshot(), field, "заполнено")))
 
     def test_reports_home_paths(self) -> None:
         paths = (
@@ -527,7 +584,11 @@ class StartTest(HandoffCase):
 
     def test_briefs_resumed_session_in_fixed_order(self) -> None:
         runtime = next(runtime for runtime in RUNTIMES.values() if runtime["checked"]["unconfirmed"])
-        self.session.write_text(filled_snapshot(time="2026-10-13T09:00:00Z", runtime="grok"), encoding="utf-8")
+        chosen = {field: choices[-1] for field, choices in enumerated_fields(TEMPLATE).items()}
+        snapshot = filled_snapshot(time="2026-10-13T09:00:00Z", runtime="grok")
+        for field, choice in chosen.items():
+            snapshot = set_field(snapshot, field, f"`{choice}`")
+        self.session.write_text(snapshot, encoding="utf-8")
         self.archive.mkdir()
         for name in ("20261012T180500000000Z-codex.md", "20261013T080000000000Z-claude.md"):
             (self.archive / name).write_text("старый снимок\n", encoding="utf-8")
@@ -545,7 +606,32 @@ class StartTest(HandoffCase):
                 f"Состояние: {self.state}",
                 "Рабочая копия: основной клон",
                 f"Снимок: SESSION.md, схема {SCHEMA}, снят 2026-10-13T09:00:00Z, рантайм grok",
+                *(f"{field}: {choice}" for field, choice in chosen.items()),
                 "Архив: 2 снимка, последний 20261013T080000000000Z-claude.md",
+                "Дальше: прочитай .handoff/README.md, раздел «Возобновление сессии», затем снимок.",
+            ],
+        )
+
+    def test_reports_enumerated_field_absent_from_older_snapshot(self) -> None:
+        self.session.write_text(drop_field(filled_snapshot(), ENUM_FIELD), encoding="utf-8")
+
+        result = self.run_script("start", "--runtime", "unknown")
+
+        self.assertIn(f"{ENUM_FIELD}: в снимке не указан", result.stdout.splitlines())
+
+    def test_prints_one_line_per_enumerated_field_of_real_template(self) -> None:
+        self.template.write_text(REAL_TEMPLATE, encoding="utf-8")
+        self.session.write_text(filled_snapshot(), encoding="utf-8")
+
+        result = self.run_script("start", "--runtime", "unknown")
+
+        self.assertEqual(result.returncode, 0, output(result))
+        self.assertEqual(
+            result.stdout.splitlines()[3:],
+            [
+                f"Снимок: SESSION.md, схема {SCHEMA}, снят 2026-10-13T09:00:00Z, рантайм claude",
+                *(f"{field}: {choices[0]}" for field, choices in enumerated_fields(REAL_TEMPLATE).items()),
+                "Архив: пусто",
                 "Дальше: прочитай .handoff/README.md, раздел «Возобновление сессии», затем снимок.",
             ],
         )

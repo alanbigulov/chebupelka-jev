@@ -177,6 +177,10 @@ def unquoted(value: str) -> str:
     return value.replace("`", "").strip()
 
 
+# A template value that is one placeholder such as <execute / guide> closes the field to the listed ids.
+ENUMERATION = re.compile(r"<([a-z][a-z0-9_-]*(?: / [a-z][a-z0-9_-]*)+)>")
+
+
 @dataclass(frozen=True)
 class Snapshot:
     lines: tuple[str, ...]
@@ -195,6 +199,11 @@ class Snapshot:
     def value(self, field: str) -> str:
         row = self.metadata.get(field)
         return unquoted(row.value) if row else ""
+
+    @property
+    def enumerations(self) -> dict[str, tuple[str, ...]]:
+        found = {field: ENUMERATION.fullmatch(self.value(field)) for field in self.metadata}
+        return {field: tuple(choices.group(1).split(" / ")) for field, choices in found.items() if choices}
 
     @property
     def schema(self) -> int | None:
@@ -375,6 +384,18 @@ def check_time(ctx: CheckContext) -> list[Problem]:
     return [Problem(f"время снимка «{value}» не в формате YYYY-MM-DDTHH:MM:SSZ", line)]
 
 
+def check_enumerations(ctx: CheckContext) -> list[Problem]:
+    problems = []
+    for field, choices in ctx.template.enumerations.items():
+        value = ctx.snapshot.value(field)
+        reported_by_other_rules = not value or value == ctx.template.value(field)
+        if reported_by_other_rules or value in choices:
+            continue
+        message = f"поле «{field}»: значение «{value}» не входит в список: {', '.join(choices)}"
+        problems.append(Problem(message, ctx.snapshot.metadata[field].line))
+    return problems
+
+
 PRIVACY_KINDS = {
     "secret": "секрет",
     "home": "абсолютный домашний путь",
@@ -444,6 +465,7 @@ RULES: tuple[Callable[[CheckContext], list[Problem]], ...] = (
     check_placeholders,
     check_runtime,
     check_time,
+    check_enumerations,
     check_privacy,
     check_links,
 )
@@ -512,6 +534,8 @@ def state_briefing(layout: Layout, registry: Registry) -> list[str]:
         schema = "схема не распознана" if snapshot.schema is None else f"схема {snapshot.schema}"
         taken = f"снят {snapshot.value(TIME_FIELD)}" if snapshot.time else "время не распознано"
         lines = [f"Снимок: {SESSION_NAME}, {schema}, {taken}, рантайм {snapshot.runtime_id(registry)}"]
+        for field in read_snapshot(TEMPLATE_PATH).enumerations:
+            lines.append(f"{field}: {snapshot.value(field) or 'в снимке не указан'}")
         reading = "«Возобновление сессии», затем снимок"
     elif archived:
         lines = [f"Снимок: {SESSION_NAME} нет. Последний снимок лежит в архиве."]
