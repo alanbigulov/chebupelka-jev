@@ -10,5 +10,13 @@ wheels/
 # Virtual environments
 .venv
 
-# Local cross-agent session handoff, never published
-/.handoff/
+# Local session state, never published: SESSION.md, SESSION.next.md, archive/.
+# The protocol, the snapshot template and the helper script are tracked.
+/.handoff/*
+!/.handoff/README.md
+!/.handoff/TEMPLATE.md
+!/.handoff/handoff.py
+!/.handoff/test_handoff.py
+
+# Sandbox of the tutor mode "sandbox": demo files that never touch project code
+/.sandbox/

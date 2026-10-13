@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "id": "devin",
+  "name": "Devin",
+  "aliases": ["devin-cli"],
+  "cli": "devin",
+  "entry_files": ["AGENTS.md"],
+  "detect_env": [],
+  "commands": {
+    "start": "devin -- \"{prompt}\"",
+    "headless": "devin -p \"{prompt}\"",
+    "continue": "devin --continue"
+  },
+  "checked": {
+    "date": "2026-10-13",
+    "cli_version": "3000.11.3",
+    "confirmed": [
+      "Команды start, headless и continue есть в справке devin --help.",
+      "Имя AGENTS.md встречается в исполняемом файле devin.",
+      "Сессия загружает AGENTS.md сама. В эстафете 2026-10-13 она выполнила handoff.py start первой командой и перед этим файл не читала.",
+      "В сессии эстафеты 2026-10-13 поиск по именам переменных окружения не нашёл имён с подстроками devin, cognition, swe и windsurf. Рантайм называется ключом --runtime devin."
+    ],
+    "unconfirmed": [
+      "Есть ли у Devin своя переменная для распознавания, не установлено. Полный список имён окружения не снимался. Имя AI_AGENT в сессии есть, значение не читалось. В сессии Claude Code значение AI_AGENT содержит слово claude.",
+      "Облачные сессии Devin не видят локальную .handoff/ и в протокол не входят."
+    ]
+  }
+}

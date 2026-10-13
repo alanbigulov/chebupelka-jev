@@ -1,0 +1,5 @@
+{
+  "schema": 1,
+  "resume_prompt": "Продолжи работу по AGENTS.md и .handoff/SESSION.md.",
+  "runtimes": ["claude", "codex", "cursor", "devin", "grok", "opencode"]
+}

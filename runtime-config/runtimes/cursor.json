@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "id": "cursor",
+  "name": "Cursor",
+  "aliases": ["cursor-agent", "cursor-cli"],
+  "cli": "cursor-agent",
+  "entry_files": ["AGENTS.md"],
+  "detect_env": ["CURSOR_AGENT"],
+  "commands": {
+    "start": "cursor-agent \"{prompt}\"",
+    "headless": "cursor-agent -p \"{prompt}\"",
+    "continue": "cursor-agent --continue"
+  },
+  "checked": {
+    "date": "2026-10-13",
+    "cli_version": "2026.10.01-e373342",
+    "confirmed": [
+      "Команды start, headless и continue есть в справке cursor-agent --help.",
+      "Имя AGENTS.md встречается в файлах установленного cursor-agent.",
+      "Сессия загружает AGENTS.md сама. В эстафете 2026-10-13 она выполнила handoff.py start первой командой и перед этим файл не читала.",
+      "Имя CURSOR_AGENT есть в окружении сессии эстафеты 2026-10-13. В сессиях остальных пяти рантаймов его нет."
+    ],
+    "unconfirmed": [
+      "Распознавание без ключа --runtime в сессии Cursor не запускалось. Значение CURSOR_AGENT не читалось.",
+      "Агент внутри приложения Cursor не проверялся; конфигурация описывает CLI."
+    ]
+  }
+}
