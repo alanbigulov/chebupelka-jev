@@ -30,6 +30,7 @@
 | Установить и запустить текущего агента | [agent/README.md](agent/README.md) |
 | Пройти обучение | [Учебная навигация](coding-agent-developement/README.md) |
 | Работать с кодинговым агентом в любом рантайме | [AGENTS.md](AGENTS.md) и [протокол передачи сессии](.handoff/README.md) |
+| Выбрать, кто пишет код: агент или ты | [Режимы тьютора](coding-agent-developement/tutor-modes.md) |
 | Понять структуру и причины решений | [project-structure.md](coding-agent-developement/project-structure.md) |
 | Выбрать следующую доработку | [development-roadmap.md](coding-agent-developement/development-roadmap.md) |
 | Открыть актуальные задачи и Kanban | [GitHub Project](https://github.com/users/alanbigulov/projects/4) и [правила трекинга](coding-agent-developement/project-tracking.md) |
