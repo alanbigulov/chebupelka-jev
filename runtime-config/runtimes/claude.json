@@ -17,7 +17,8 @@
     "confirmed": [
       "Команды start, headless и continue есть в справке claude --help.",
       "Сессия Claude Code выставляет переменную окружения CLAUDECODE=1.",
-      "Claude Code загружает CLAUDE.md; строка @AGENTS.md в нём подключает общий файл правил."
+      "Claude Code загружает CLAUDE.md; строка @AGENTS.md в нём подключает общий файл правил.",
+      "В эстафете 2026-10-13 команда start без ключа --runtime распознала рантайм по CLAUDECODE. В сессиях остальных пяти рантаймов этой переменной нет."
     ],
     "unconfirmed": []
   }
