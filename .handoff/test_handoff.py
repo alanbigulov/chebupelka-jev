@@ -23,6 +23,8 @@ MARKERS = {name for runtime in RUNTIMES.values() for name in runtime["detect_env
 
 PLACEHOLDER = re.compile(r"<[^<>\n]+>")
 HEADINGS = re.findall(r"^## (.+)$", TEMPLATE, flags=re.MULTILINE)
+METADATA_FIELDS = re.findall(r"^\| ([^|\n]+) \|", TEMPLATE.split("\n## ")[1], flags=re.MULTILINE)[1:]
+SCHEMA = re.search(r"^\| Схема \| (\d+)", TEMPLATE, flags=re.MULTILINE).group(1)
 LINK_TARGET = re.compile(r"\]\(([^)#\s:]+)\)")
 RESUME_HEADER = "Продолжить в любом рантайме из корня основного клона:"
 
@@ -180,8 +182,11 @@ class CheckTest(HandoffCase):
         self.assert_single_problem(self.check(filled_snapshot(without_section=missing)), f"нет раздела «{missing}»")
 
     def test_reports_extra_section(self) -> None:
-        text = filled_snapshot(body="## 11. Сверх шаблона")
-        self.assert_single_problem(self.check(text), "11. Сверх шаблона", f"строка {line_of(text, '## 11.')}:")
+        extra = "Раздел сверх шаблона"
+        text = filled_snapshot(body=f"## {extra}")
+        self.assert_single_problem(
+            self.check(text), f"лишний раздел: «{extra}»", f"строка {line_of(text, f'## {extra}')}:"
+        )
 
     def test_reports_misplaced_section(self) -> None:
         moved = HEADINGS[3]
@@ -192,11 +197,15 @@ class CheckTest(HandoffCase):
         self.assert_clean(self.check(filled_snapshot(body="```text\n## main...origin/main\n```")))
 
     def test_reports_missing_metadata_field(self) -> None:
-        self.assert_single_problem(self.check(drop_field(filled_snapshot(), "Выпуск")), "Выпуск")
+        field = METADATA_FIELDS[-1]
+        self.assert_single_problem(self.check(drop_field(filled_snapshot(), field)), f"нет поля «{field}»")
 
     def test_reports_empty_metadata_field(self) -> None:
-        text = set_field(filled_snapshot(), "Выпуск", "")
-        self.assert_single_problem(self.check(text), "Выпуск", f"строка {line_of(text, '| Выпуск |')}:")
+        field = METADATA_FIELDS[-1]
+        text = set_field(filled_snapshot(), field, "")
+        self.assert_single_problem(
+            self.check(text), f"поле метаданных «{field}» пустое", f"строка {line_of(text, f'| {field} |')}:"
+        )
 
     def test_reports_schema_mismatch(self) -> None:
         text = filled_snapshot(schema=99)
@@ -385,6 +394,7 @@ class SaveTest(HandoffCase):
     def test_from_linked_worktree_writes_into_main_checkout(self) -> None:
         linked = self.root / "linked"
         self.git("worktree", "add", "-q", "-b", "linked", str(linked))
+        tracked = sorted(path.name for path in (linked / ".handoff").iterdir())
         prepared = filled_snapshot()
         self.prepared.write_text(prepared, encoding="utf-8")
 
@@ -393,10 +403,7 @@ class SaveTest(HandoffCase):
         self.assertEqual(result.returncode, 0, output(result))
         self.assertEqual(self.session.read_text(encoding="utf-8"), prepared)
         self.assertFalse(self.prepared.exists())
-        self.assertEqual(
-            sorted(path.name for path in (linked / ".handoff").iterdir()),
-            ["README.md", "TEMPLATE.md", "handoff.py"],
-        )
+        self.assertEqual(sorted(path.name for path in (linked / ".handoff").iterdir()), tracked)
 
     def test_prints_start_command_for_every_registry_runtime(self) -> None:
         self.prepared.write_text(filled_snapshot(), encoding="utf-8")
@@ -422,8 +429,11 @@ class StartTest(HandoffCase):
 
         self.assertEqual(result.returncode, 0, output(result))
         self.assertEqual(
-            result.stdout.splitlines()[0],
-            f"Рантайм: {runtime['name']} ({runtime['id']}), распознан по переменной {marker}",
+            result.stdout.splitlines()[:2],
+            [
+                f"Рантайм: {runtime['name']} ({runtime['id']}), распознан по переменной {marker}",
+                "Если это не твой рантайм, повтори: python3 .handoff/handoff.py start --runtime <id>",
+            ],
         )
 
     def test_accepts_explicit_runtime_given_as_alias_in_any_case(self) -> None:
@@ -439,7 +449,13 @@ class StartTest(HandoffCase):
 
         result = self.run_script("start", "--runtime", chosen["id"], **{marked["detect_env"][0]: "1"})
 
-        self.assertEqual(result.stdout.splitlines()[:1], [f"Рантайм: {chosen['name']} ({chosen['id']}), указан явно"])
+        self.assertEqual(
+            result.stdout.splitlines()[:2],
+            [
+                f"Рантайм: {chosen['name']} ({chosen['id']}), указан явно",
+                f"Конфигурация: runtime-config/runtimes/{chosen['id']}.json",
+            ],
+        )
 
     def test_exits_2_with_id_list_when_no_marker_is_set(self) -> None:
         result = self.run_script("start")
@@ -501,7 +517,7 @@ class StartTest(HandoffCase):
                 *(f"Не подтверждено: {note}" for note in runtime["checked"]["unconfirmed"]),
                 f"Состояние: {self.state}",
                 "Рабочая копия: основной клон",
-                "Снимок: SESSION.md, схема 2, снят 2026-10-13T09:00:00Z, рантайм grok",
+                f"Снимок: SESSION.md, схема {SCHEMA}, снят 2026-10-13T09:00:00Z, рантайм grok",
                 "Архив: 2 снимка, последний 20261013T080000000000Z-claude.md",
                 "Дальше: прочитай .handoff/README.md, раздел «Возобновление сессии», затем снимок.",
             ],
@@ -529,17 +545,23 @@ class StartTest(HandoffCase):
             ],
         )
 
-    def test_names_newest_archive_as_fallback_when_session_is_missing(self) -> None:
+    def test_points_to_newest_archived_snapshot_when_session_is_missing(self) -> None:
+        newest = "20261013T080000000000Z-claude.md"
         self.archive.mkdir()
-        for name in ("20261012T180500000000Z-codex.md", "20261013T080000000000Z-claude.md"):
+        for name in ("20261012T180500000000Z-codex.md", newest):
             (self.archive / name).write_text("старый снимок\n", encoding="utf-8")
 
         result = self.run_script("start", "--runtime", "unknown")
 
-        [archive_line] = [line for line in result.stdout.splitlines() if line.startswith("Архив:")]
-        self.assertIn("20261013T080000000000Z-claude.md", archive_line)
-        self.assertNotIn("20261012T180500000000Z-codex.md", archive_line)
-        self.assertIn("прочитай", archive_line)
+        self.assertEqual(result.returncode, 0, output(result))
+        self.assertEqual(
+            result.stdout.splitlines()[-3:],
+            [
+                "Снимок: SESSION.md нет. Последний снимок лежит в архиве.",
+                f"Архив: 2 снимка, последний {newest}",
+                f"Дальше: прочитай .handoff/README.md, раздел «Возобновление сессии», затем archive/{newest}.",
+            ],
+        )
 
     def test_warns_about_prepared_snapshot_that_was_never_saved(self) -> None:
         self.prepared.write_text(filled_snapshot(), encoding="utf-8")
@@ -594,6 +616,11 @@ class RegistryTest(unittest.TestCase):
         self.assertEqual(len(names), len(set(names)), "an id or alias is claimed by two runtimes")
         self.assertEqual(len(markers), len(set(markers)), "an environment marker is claimed by two runtimes")
         self.assertNotIn("unknown", names)
+
+    def test_agents_md_names_every_runtime_id(self) -> None:
+        agents = (PROJECT / "AGENTS.md").read_text(encoding="utf-8")
+        for runtime_id in (*MANIFEST["runtimes"], "unknown"):
+            self.assertIn(f"`{runtime_id}`", agents)
 
 
 if __name__ == "__main__":

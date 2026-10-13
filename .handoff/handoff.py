@@ -462,6 +462,9 @@ def report(problems: Sequence[Problem]) -> None:
         print(problem, file=sys.stderr)
 
 
+START_WITH_RUNTIME = "python3 .handoff/handoff.py start --runtime <id>"
+
+
 def resolve_runtime(registry: Registry, requested: str | None, environ: Mapping[str, str]) -> tuple[Runtime, str]:
     known = f"Известные id: {', '.join(registry.ids)}; для рантайма вне реестра: {UNKNOWN_RUNTIME}."
     if requested is not None:
@@ -478,16 +481,18 @@ def resolve_runtime(registry: Registry, requested: str | None, environ: Mapping[
         found = f"подошло несколько рантаймов: {seen}"
     else:
         found = "ни одна переменная окружения из реестра не задана"
-    rerun = "Запусти ещё раз: python3 .handoff/handoff.py start --runtime <id>"
-    raise HandoffError(f"рантайм не распознан, {found}.\n{known}\n{rerun}", code=2)
+    raise HandoffError(f"рантайм не распознан, {found}.\n{known}\nЗапусти ещё раз: {START_WITH_RUNTIME}", code=2)
 
 
 def runtime_briefing(registry: Registry, requested: str | None, environ: Mapping[str, str]) -> list[str]:
     if requested is not None and requested.lower() == UNKNOWN_RUNTIME:
         return [f"Рантайм: неизвестен ({UNKNOWN_RUNTIME})"]
     runtime, how = resolve_runtime(registry, requested, environ)
+    # Child processes inherit the marker, so a runtime started from another runtime's terminal looks like its parent.
+    correction = [f"Если это не твой рантайм, повтори: {START_WITH_RUNTIME}"] if requested is None else []
     return [
         f"Рантайм: {runtime.name} ({runtime.id}), {how}",
+        *correction,
         f"Конфигурация: {runtime.config_path}",
         f"Входные файлы: {', '.join(runtime.entry_files)}",
         *(f"Не подтверждено: {note}" for note in runtime.unconfirmed),
@@ -503,30 +508,30 @@ def plural(count: int, one: str, few: str, many: str) -> str:
 
 
 def state_briefing(layout: Layout, registry: Registry) -> list[str]:
-    resuming = layout.session.is_file()
-    if resuming:
+    archived = [path.name for path in layout.archived()]
+    if layout.session.is_file():
         snapshot = read_snapshot(layout.session)
         schema = "схема не распознана" if snapshot.schema is None else f"схема {snapshot.schema}"
         taken = f"снят {snapshot.value(TIME_FIELD)}" if snapshot.time else "время не распознано"
         lines = [f"Снимок: {SESSION_NAME}, {schema}, {taken}, рантайм {snapshot.runtime_id(registry)}"]
+        reading = "«Возобновление сессии», затем снимок"
+    elif archived:
+        lines = [f"Снимок: {SESSION_NAME} нет. Последний снимок лежит в архиве."]
+        reading = f"«Возобновление сессии», затем {ARCHIVE_NAME}/{archived[-1]}"
     else:
         lines = ["Снимок: нет. Это первая сессия в этом клоне."]
+        reading = "«Первая сессия»"
     if layout.prepared.is_file():
         lines.append(
             f"Внимание: в папке состояния лежит {PREPARED_NAME}. Прошлая сессия подготовила снимок "
             "и не сохранила его; прочитай его до начала работы."
         )
-    archived = [path.name for path in layout.archived()]
     if archived:
         count = f"{len(archived)} {plural(len(archived), 'снимок', 'снимка', 'снимков')}"
-        fallback = "" if resuming else f"; {SESSION_NAME} нет, поэтому прочитай этот файл как последний снимок"
-        lines.append(f"Архив: {count}, последний {archived[-1]}{fallback}")
+        lines.append(f"Архив: {count}, последний {archived[-1]}")
     else:
         lines.append("Архив: пусто")
-    if resuming:
-        lines.append("Дальше: прочитай .handoff/README.md, раздел «Возобновление сессии», затем снимок.")
-    else:
-        lines.append("Дальше: прочитай .handoff/README.md, раздел «Первая сессия».")
+    lines.append(f"Дальше: прочитай .handoff/README.md, раздел {reading}.")
     return lines
 
 
