@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "id": "cursor",
+  "name": "Cursor",
+  "aliases": ["cursor-agent", "cursor-cli"],
+  "cli": "cursor-agent",
+  "entry_files": ["AGENTS.md"],
+  "detect_env": ["CURSOR_AGENT"],
+  "commands": {
+    "start": "cursor-agent \"{prompt}\"",
+    "headless": "cursor-agent -p \"{prompt}\"",
+    "continue": "cursor-agent --continue"
+  },
+  "checked": {
+    "date": "2026-10-13",
+    "cli_version": "2026.10.01-e373342",
+    "confirmed": [
+      "Команды start, headless и continue есть в справке cursor-agent --help.",
+      "Имя AGENTS.md встречается в файлах установленного cursor-agent."
+    ],
+    "unconfirmed": [
+      "Автозагрузка AGENTS.md в начале сессии: подтвердить в эстафете.",
+      "Переменная CURSOR_AGENT найдена только как строка в файлах cursor-agent; выставляет ли её сессия, не проверено.",
+      "Агент внутри приложения Cursor не проверялся; конфигурация описывает CLI."
+    ]
+  }
+}

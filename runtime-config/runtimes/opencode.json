@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "id": "opencode",
+  "name": "OpenCode",
+  "aliases": [],
+  "cli": "opencode",
+  "entry_files": ["AGENTS.md"],
+  "detect_env": ["OPENCODE"],
+  "commands": {
+    "start": "opencode --prompt \"{prompt}\"",
+    "headless": "opencode run \"{prompt}\"",
+    "continue": "opencode --continue"
+  },
+  "checked": {
+    "date": "2026-10-13",
+    "cli_version": "2.0.27",
+    "confirmed": [
+      "Команды start, headless и continue есть в справке opencode --help и opencode run --help.",
+      "Имя AGENTS.md встречается в исполняемом файле opencode."
+    ],
+    "unconfirmed": [
+      "Автозагрузка AGENTS.md в начале сессии: подтвердить в эстафете.",
+      "Переменная OPENCODE найдена только как строка в исполняемом файле; выставляет ли её сессия, не проверено."
+    ]
+  }
+}

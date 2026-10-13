@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "id": "codex",
+  "name": "Codex",
+  "aliases": ["openai-codex"],
+  "cli": "codex",
+  "entry_files": ["AGENTS.md"],
+  "detect_env": ["CODEX_THREAD_ID"],
+  "commands": {
+    "start": "codex \"{prompt}\"",
+    "headless": "codex exec \"{prompt}\"",
+    "continue": "codex resume --last"
+  },
+  "checked": {
+    "date": "2026-10-13",
+    "cli_version": "0.162.1",
+    "confirmed": [
+      "Команды start, headless и continue есть в справке codex --help и codex resume --help.",
+      "Имя AGENTS.md встречается в исполняемом файле codex."
+    ],
+    "unconfirmed": [
+      "Автозагрузка AGENTS.md в начале сессии: подтвердить в эстафете.",
+      "Переменная CODEX_THREAD_ID найдена только как строка в исполняемом файле; выставляет ли её сессия, не проверено."
+    ]
+  }
+}

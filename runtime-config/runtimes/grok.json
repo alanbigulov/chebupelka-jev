@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "id": "grok",
+  "name": "Grok Build",
+  "aliases": ["grok-build", "grok-cli"],
+  "cli": "grok",
+  "entry_files": ["AGENTS.md"],
+  "detect_env": ["GROK_SESSION_ID"],
+  "commands": {
+    "start": "grok \"{prompt}\"",
+    "headless": "grok -p \"{prompt}\"",
+    "continue": "grok --continue"
+  },
+  "checked": {
+    "date": "2026-10-13",
+    "cli_version": "1.0.50",
+    "confirmed": [
+      "Команды start, headless и continue есть в справке grok --help.",
+      "Имя AGENTS.md встречается в исполняемом файле grok."
+    ],
+    "unconfirmed": [
+      "Автозагрузка AGENTS.md в начале сессии: подтвердить в эстафете.",
+      "Переменная GROK_SESSION_ID найдена только как строка в исполняемом файле; выставляет ли её сессия, не проверено."
+    ]
+  }
+}

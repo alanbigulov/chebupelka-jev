@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "claude",
+  "name": "Claude Code",
+  "aliases": ["claude-code"],
+  "cli": "claude",
+  "entry_files": ["CLAUDE.md"],
+  "detect_env": ["CLAUDECODE"],
+  "commands": {
+    "start": "claude \"{prompt}\"",
+    "headless": "claude -p \"{prompt}\"",
+    "continue": "claude --continue"
+  },
+  "checked": {
+    "date": "2026-10-13",
+    "cli_version": "2.1.296",
+    "confirmed": [
+      "Команды start, headless и continue есть в справке claude --help.",
+      "Сессия Claude Code выставляет переменную окружения CLAUDECODE=1.",
+      "Claude Code загружает CLAUDE.md; строка @AGENTS.md в нём подключает общий файл правил."
+    ],
+    "unconfirmed": []
+  }
+}
