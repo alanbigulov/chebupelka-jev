@@ -359,7 +359,9 @@ class CheckTest(HandoffCase):
         linked = self.root / "linked"
         self.git("worktree", "add", "-q", "-b", "linked", str(linked))
         (linked / "draft.md").write_text("черновик\n", encoding="utf-8")
-        self.prepared.write_text(filled_snapshot(body="[черновик](../draft.md)"), encoding="utf-8")
+        text = filled_snapshot(body="[черновик](../draft.md)")
+        self.prepared.write_text(text, encoding="utf-8")
+        (linked / ".handoff" / "SESSION.next.md").write_text(text, encoding="utf-8")
 
         self.assert_single_problem(self.run_script("check"), "../draft.md")
         self.assert_clean(self.run_script("check", checkout=linked))
@@ -452,15 +454,40 @@ class SaveTest(HandoffCase):
         linked = self.root / "linked"
         self.git("worktree", "add", "-q", "-b", "linked", str(linked))
         tracked = sorted(path.name for path in (linked / ".handoff").iterdir())
+        before = set(self.state_files())
         prepared = filled_snapshot()
-        self.prepared.write_text(prepared, encoding="utf-8")
+        (linked / ".handoff" / "SESSION.next.md").write_text(prepared, encoding="utf-8")
 
         result = self.run_script("save", checkout=linked, cwd=linked)
 
         self.assertEqual(result.returncode, 0, output(result))
         self.assertEqual(self.session.read_text(encoding="utf-8"), prepared)
-        self.assertFalse(self.prepared.exists())
+        self.assertEqual(set(self.state_files()) - before, {"SESSION.md"})
         self.assertEqual(sorted(path.name for path in (linked / ".handoff").iterdir()), tracked)
+
+    def test_from_linked_worktree_keeps_prepared_snapshot_of_main_checkout(self) -> None:
+        linked = self.root / "linked"
+        self.git("worktree", "add", "-q", "-b", "linked", str(linked))
+        other_agent_draft = filled_snapshot(body="черновик другого агента")
+        self.prepared.write_text(other_agent_draft, encoding="utf-8")
+        (linked / ".handoff" / "SESSION.next.md").write_text(filled_snapshot(), encoding="utf-8")
+
+        result = self.run_script("save", checkout=linked, cwd=linked)
+
+        self.assertEqual(result.returncode, 0, output(result))
+        self.assertEqual(self.prepared.read_text(encoding="utf-8"), other_agent_draft)
+
+    def test_saving_snapshot_that_is_already_saved_adds_no_archive(self) -> None:
+        saved = filled_snapshot()
+        self.session.write_text(saved, encoding="utf-8")
+        self.prepared.write_text(saved, encoding="utf-8")
+
+        result = self.run_script("save")
+
+        self.assertEqual(result.returncode, 0, output(result))
+        self.assertEqual(self.state_files().get("SESSION.md"), saved.encode("utf-8"))
+        self.assertFalse(self.archive.exists())
+        self.assertFalse(self.prepared.exists())
 
     def test_prints_start_command_for_every_registry_runtime(self) -> None:
         self.prepared.write_text(filled_snapshot(), encoding="utf-8")
