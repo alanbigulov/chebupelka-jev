@@ -57,7 +57,8 @@
 |---|---|
 | Возобновляешь или закрываешь сессию | [.handoff/README.md](.handoff/README.md) |
 | Начинаешь работу в режиме или меняешь режим | [tutor-modes.md](coding-agent-developement/tutor-modes.md) |
-| Выбираешь тикет или меняешь его статус | [project-tracking.md](coding-agent-developement/project-tracking.md) |
+| Выбираешь тикет или читаешь его критерии | [tickets/README.md](coding-agent-developement/tickets/README.md) |
+| Меняешь статус тикета или записываешь доказательства | [project-tracking.md](coding-agent-developement/project-tracking.md) |
 | Запускаешь или проверяешь `chebu` | [agent/README.md](agent/README.md) |
 | Объясняешь устройство `chebu` | [Учебная навигация](coding-agent-developement/README.md) |
 | Создаёшь файл или каталог | [project-structure.md](coding-agent-developement/project-structure.md) |
