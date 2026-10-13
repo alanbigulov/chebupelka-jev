@@ -20,3 +20,6 @@ wheels/
 
 # Sandbox of the tutor mode "sandbox": demo files that never touch project code
 /.sandbox/
+
+# Worktrees that Claude Code creates for isolated sessions
+/.claude/worktrees/
