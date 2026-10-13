@@ -186,7 +186,6 @@ class Snapshot:
     @classmethod
     def parse(cls, text: str) -> Snapshot:
         lines = tuple(text.splitlines())
-        # Headings count only outside fences, because pasted `git status --short --branch` output starts with "## ".
         prose = tuple(outside_fences(lines))
         headings = tuple((number, line[3:].strip()) for number, line in prose if line.startswith("## "))
         metadata = metadata_table(prose, headings[0][0]) if headings else {}
@@ -286,8 +285,6 @@ class Layout:
 
 def discover_layout() -> Layout:
     checkout_root = git_path(SCRIPT_DIR, "rev-parse", "--show-toplevel").resolve()
-    # Asked from the checkout root, because older Git printed a relative common dir
-    # relative to the root even when it ran in a subdirectory.
     common_dir = git_path(checkout_root, "rev-parse", "--git-common-dir").resolve()
     main_root = common_dir.parent if common_dir.name == ".git" else checkout_root
     return Layout(checkout_root, main_root)
@@ -400,7 +397,7 @@ EMAIL_PATTERNS = (r"(?<![A-Za-z0-9._%+-])(?!(?i:git|noreply)@)[A-Za-z0-9._%+-]+@
 
 def privacy_scanner(home: str) -> re.Pattern[str]:
     home_patterns = HOME_PATTERNS
-    # A home of "/" (some containers) would flag every path.
+    # With a home of "/" (some containers) the pattern would match almost every slash in the snapshot.
     if os.path.isabs(home) and os.path.dirname(home) != home:
         home_patterns += (re.escape(home) + r"(?![\w.-])",)
     groups = {"secret": SECRET_PATTERNS, "home": home_patterns, "email": EMAIL_PATTERNS}
@@ -488,7 +485,6 @@ def runtime_briefing(registry: Registry, requested: str | None, environ: Mapping
     if requested is not None and requested.lower() == UNKNOWN_RUNTIME:
         return [f"Рантайм: неизвестен ({UNKNOWN_RUNTIME})"]
     runtime, how = resolve_runtime(registry, requested, environ)
-    # Child processes inherit the marker, so a runtime started from another runtime's terminal looks like its parent.
     correction = [f"Если это не твой рантайм, повтори: {START_WITH_RUNTIME}"] if requested is None else []
     return [
         f"Рантайм: {runtime.name} ({runtime.id}), {how}",
@@ -565,7 +561,6 @@ def archive_slug(runtime_id: str) -> str:
 
 def archive_previous(layout: Layout, content: bytes, runtime_id: str) -> str:
     archived = layout.archived()
-    # A rerun after a crash between archiving and replacing must not store the same snapshot twice.
     if archived and archived[-1].read_bytes() == content:
         return f"Прежний снимок уже лежит в архиве, копия не создавалась: {ARCHIVE_NAME}/{archived[-1].name}"
     layout.archive_dir.mkdir(exist_ok=True)
@@ -616,8 +611,7 @@ def cmd_save(args: argparse.Namespace) -> int:
     return 0
 
 
-class Parser(argparse.ArgumentParser):
-    # argparse writes its own usage and error text in English.
+class RussianUsageParser(argparse.ArgumentParser):
     def format_help(self) -> str:
         return USAGE
 
@@ -628,7 +622,7 @@ class Parser(argparse.ArgumentParser):
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    parser = Parser()
+    parser = RussianUsageParser()
     commands = parser.add_subparsers(dest="command", required=True)
     start = commands.add_parser("start")
     start.add_argument("--runtime")
