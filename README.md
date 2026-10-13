@@ -16,10 +16,12 @@
 |---|---|
 | OpenAI Codex, ведущий агент сессии | Пошаговое обучение, настройка проекта, общая документация, организация работы и публикация выпусков |
 | Вспомогательные агенты Codex с назначенной моделью `gpt-6.1-sol` | Подробные уроки трёх пакетов, переименование и перенос файлов, локальные тесты и независимая проверка изменений |
-| Claude Code с моделью Claude Opus 5.5 | Переименование проекта в `chebu`, проверка ссылок, перестройка трекера и документы выпуска v0.1.3 |
+| Claude Code с моделью Claude Opus 5.5 | Переименование проекта в `chebu`, проверка ссылок, перестройка трекера и документы выпуска v0.1.3; после v0.1.3 правила для агентов и передача сессии между рантаймами |
 | DeepSeek с API-именем `deepseek-flash` | Модель внутри исследуемого агента; участвовала в проверке подключения и выполнении учебной задачи `pwd` |
 
 Учебные материалы созданы с помощью Codex. DeepSeek используется как модель запускаемого `chebu`. Исходная минимальная реализация принадлежит автору upstream-проекта. Дальнейшие занятия будут фиксировать, какие агенты участвовали, что было изменено и какими проверками подтверждён результат.
+
+Вести сессию может любой из шести рантаймов: Codex, Claude Code, OpenCode, Grok, Cursor, Devin. Правила для них записаны в [AGENTS.md](AGENTS.md). [Протокол передачи](.handoff/README.md) позволяет закрыть сессию в одном рантайме и продолжить в другом.
 
 ## Выбери маршрут
 
@@ -27,6 +29,7 @@
 |---|---|
 | Установить и запустить текущего агента | [agent/README.md](agent/README.md) |
 | Пройти обучение | [Учебная навигация](coding-agent-developement/README.md) |
+| Работать с кодинговым агентом в любом рантайме | [AGENTS.md](AGENTS.md) и [протокол передачи сессии](.handoff/README.md) |
 | Понять структуру и причины решений | [project-structure.md](coding-agent-developement/project-structure.md) |
 | Выбрать следующую доработку | [development-roadmap.md](coding-agent-developement/development-roadmap.md) |
 | Открыть актуальные задачи и Kanban | [GitHub Project](https://github.com/users/alanbigulov/projects/4) и [правила трекинга](coding-agent-developement/project-tracking.md) |
@@ -71,6 +74,9 @@ uv run python -m unittest discover -s tests -v
 ```text
 chebupelka-jev/
 ├── README.md, VERSIONING.md, CHANGELOG.md    общие документы
+├── AGENTS.md, CLAUDE.md                    правила для ведущего агента
+├── .handoff/                               протокол и скрипт передачи сессии
+├── runtime-config/                         конфигурации рантаймов
 ├── agent/                                  исполняемый Python-проект
 │   ├── chebu.py
 │   ├── pyproject.toml, uv.lock, .python-version
