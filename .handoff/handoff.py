@@ -5,6 +5,7 @@ import difflib
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 from collections.abc import Callable, Iterator, Mapping, Sequence
@@ -272,7 +273,8 @@ class Layout:
 
     @property
     def prepared(self) -> Path:
-        return self.state_dir / PREPARED_NAME
+        # An agent isolated in a linked worktree may be unable to write into the main checkout.
+        return self.checkout_root / STATE_DIR_NAME / PREPARED_NAME
 
     @property
     def archive_dir(self) -> Path:
@@ -543,7 +545,7 @@ def state_briefing(layout: Layout, registry: Registry) -> list[str]:
         reading = "«Первая сессия»"
     if layout.prepared.is_file():
         lines.append(
-            f"Внимание: в папке состояния лежит {PREPARED_NAME}. Прошлая сессия подготовила снимок "
+            f"Внимание: в {STATE_DIR_NAME}/ этой рабочей копии лежит {PREPARED_NAME}. Прошлая сессия подготовила снимок "
             "и не сохранила его; прочитай его до начала работы."
         )
     if archived:
@@ -598,6 +600,19 @@ def archive_previous(layout: Layout, content: bytes, runtime_id: str) -> str:
     return f"Прежний снимок убран в архив: {ARCHIVE_NAME}/{target.name}"
 
 
+def install(prepared: Path, session: Path) -> None:
+    if prepared.parent == session.parent:
+        os.replace(prepared, session)
+        return
+    # A linked worktree can sit on another filesystem, where os.replace cannot move a file.
+    # Staging the copy next to SESSION.md keeps the swap atomic.
+    session.parent.mkdir(exist_ok=True)
+    staged = session.with_name(f"{SESSION_NAME}.{os.getpid()}.tmp")
+    shutil.copyfile(prepared, staged)
+    os.replace(staged, session)
+    prepared.unlink()
+
+
 def cmd_save(args: argparse.Namespace) -> int:
     layout = discover_layout()
     registry = load_registry(RUNTIME_CONFIG_DIR)
@@ -619,14 +634,17 @@ def cmd_save(args: argparse.Namespace) -> int:
     if layout.session.is_file():
         content = layout.session.read_bytes()
         previous = Snapshot.parse(content.decode("utf-8", errors="replace"))
-        if previous.time and prepared.time and prepared.time < previous.time:
+        if content == layout.prepared.read_bytes():
+            archive_note = "Этот снимок уже сохранён, архив не менялся."
+        elif previous.time and prepared.time and prepared.time < previous.time:
             raise HandoffError(
                 f"снимок не сохранён: в {SESSION_NAME} уже лежит более новый снимок "
                 f"({previous.value(TIME_FIELD)} против {prepared.value(TIME_FIELD)}). "
                 f"Сначала прочитай его, перенеси нужное в {PREPARED_NAME}, обнови время снимка и повтори save."
             )
-        archive_note = archive_previous(layout, content, previous.runtime_id(registry))
-    os.replace(layout.prepared, layout.session)
+        else:
+            archive_note = archive_previous(layout, content, previous.runtime_id(registry))
+    install(layout.prepared, layout.session)
     print(f"Снимок сохранён: {layout.session}")
     print(archive_note)
     print("Продолжить в любом рантайме из корня основного клона:")
