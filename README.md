@@ -190,6 +190,7 @@ chebupelka-jev/
 ├── AGENTS.md, CLAUDE.md                    правила для ведущего агента
 ├── .handoff/                               протокол и скрипт передачи сессии
 ├── runtime-config/                         конфигурации рантаймов
+├── chebu-tutor-skill/                      разработка навыка chebu-tutor
 ├── agent/                                  исполняемый Python-проект
 │   ├── chebu.py
 │   ├── pyproject.toml, uv.lock, .python-version
