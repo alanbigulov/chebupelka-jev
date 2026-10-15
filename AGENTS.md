@@ -64,3 +64,4 @@
 | Создаёшь файл или каталог | [project-structure.md](coding-agent-developement/project-structure.md) |
 | Готовишь выпуск или разворачиваешь старую версию | [VERSIONING.md](VERSIONING.md) |
 | Нужны команды запуска другого рантайма | `runtime-config/runtimes/<id>.json` |
+| Разрабатываешь навык `chebu-tutor` | [chebu-tutor-docs](chebu-tutor-skill/chebu-tutor-docs/README.md) |
