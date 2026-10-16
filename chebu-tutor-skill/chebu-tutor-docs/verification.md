@@ -10,7 +10,7 @@
 
 | Проверка | Команда | Появляется | Что доказывает |
 |---|---|---|---|
-| Протокол передачи сессии | `python3 -m unittest discover -s .handoff -p 'test_*.py' -v` | Уже есть, 63 теста | Навык не сломал `handoff.py` |
+| Протокол передачи сессии | `python3 -m unittest discover -s .handoff -p 'test_*.py' -v` | Уже есть: 63 теста, после этапа 3 их 74 | Навык не сломал `handoff.py`, ключ `--mode` разбирает флаг |
 | Тесты навыка | `python3 -m unittest discover -s chebu-tutor-skill/tests -v` | Этап 2 | Разбор флага, `skill.json`, синхронизация |
 | Синхронизация адаптеров | `python3 chebu-tutor-skill/tools/sync.py --check` | Этап 4 | Адаптеры совпадают с источником и версией |
 | Пробелы в изменениях | `git diff --check` | Уже есть | В diff нет висящих пробелов и конфликтных маркеров |

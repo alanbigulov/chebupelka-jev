@@ -4,7 +4,7 @@
 
 ## Статус
 
-Этап 2: каркас. Есть [skill.json](skill.json) с версией `0.1.0`, [CHANGELOG](CHANGELOG.md) навыка и первые тесты. Навык ещё нельзя вызвать: канонического текста, генератора и адаптеров нет. Статус этапов ведёт [progress.md](chebu-tutor-docs/progress.md).
+Этап 3: проверка флага и канонический текст. Есть [skill.json](skill.json) с версией `0.1.0`, [CHANGELOG](CHANGELOG.md) навыка, канонический текст [source/SKILL.md](source/SKILL.md) и тесты. Флаг проверяет ключ `--mode` у `python3 .handoff/handoff.py start`. Навык ещё нельзя вызвать: генератора и адаптеров нет. Статус этапов ведёт [progress.md](chebu-tutor-docs/progress.md).
 
 ## Тесты
 
@@ -14,7 +14,7 @@
 python3 -m unittest discover -s chebu-tutor-skill/tests -v
 ```
 
-Тестам нужна только стандартная библиотека Python. Сеть и API они не используют.
+Тестам нужны стандартная библиотека Python, `git` и `sh`. Тест содержания запускает `python3 .handoff/handoff.py start` в этом клоне, но состояние `.handoff/` не меняет. Сеть и API тесты не используют.
 
 ## Состав каталога
 
@@ -24,7 +24,7 @@ python3 -m unittest discover -s chebu-tutor-skill/tests -v
 | `skill.json` | Имя, версия и требования навыка | Есть, этап 2 |
 | `CHANGELOG.md` | История версий навыка | Есть, этап 2 |
 | `tests/` | Тесты навыка | Есть с этапа 2, дополняются на этапах 3–4 |
-| `source/SKILL.md` | Канонический текст навыка | 3 |
+| `source/SKILL.md` | Канонический текст навыка | Есть, этап 3 |
 | `tools/sync.py` | Генератор адаптеров и проверка синхронизации | 4 |
 
 Адаптеры будут лежать вне этого каталога, в `.claude/skills/chebu-tutor/` и `.agents/skills/chebu-tutor/`, которые читают рантаймы. Почему так, объясняет [architecture.md](chebu-tutor-docs/architecture.md).
