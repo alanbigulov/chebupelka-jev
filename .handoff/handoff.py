@@ -28,6 +28,8 @@ ARCHIVE_NAME = "archive"
 SCHEMA_FIELD = "Схема"
 TIME_FIELD = "Время снимка UTC"
 RUNTIME_FIELD = "Рантайм"
+MODE_FIELD = "Режим тьютора"
+ARGUMENTS_PLACEHOLDER = "$ARGUMENTS"
 SENDER_FIELD_PREFIX = "Отправитель"
 UNKNOWN_RUNTIME = "unknown"
 TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
@@ -36,9 +38,10 @@ ARCHIVE_STAMP_FORMAT = "%Y%m%dT%H%M%S%fZ"
 USAGE = """\
 использование: python3 .handoff/handoff.py <команда>
 
-  start [--runtime ID]  брифинг в начале сессии: рантайм, состояние, снимок, архив
-  check [ПУТЬ]          проверить снимок по TEMPLATE.md; без пути берётся SESSION.next.md
-  save                  проверить SESSION.next.md, убрать прежний SESSION.md в архив и заменить его
+  start [--runtime ID] [--mode]  брифинг в начале сессии: рантайм, состояние, снимок, архив;
+                                 с --mode сначала проверить флаг режима в словах вызова chebu-tutor на stdin
+  check [ПУТЬ]                   проверить снимок по TEMPLATE.md; без пути берётся SESSION.next.md
+  save                           проверить SESSION.next.md, убрать прежний SESSION.md в архив и заменить его
 """
 
 
@@ -527,21 +530,54 @@ def plural(count: int, one: str, few: str, many: str) -> str:
     return many
 
 
-def state_briefing(layout: Layout, registry: Registry) -> list[str]:
-    archived = [path.name for path in layout.archived()]
+def skill_usage(modes: Sequence[str]) -> str:
+    return f"использование: chebu-tutor {'|'.join(f'--{mode}' for mode in modes)} [цель, тикет, ограничения]"
+
+
+def requested_mode(words: Sequence[str], modes: Sequence[str]) -> str | None:
+    flags = [word for word in words if word.startswith("--")]
+    if ARGUMENTS_PLACEHOLDER in words:
+        reason = f"в словах вызова осталось {ARGUMENTS_PLACEHOLDER}: замени его словами, с которыми ученик вызвал навык"
+    elif len(flags) > 1:
+        reason = f"нужен один флаг режима, получено {len(flags)}: {' '.join(flags)}"
+    elif flags and flags[0][2:] not in modes:
+        reason = f"флаг {flags[0]} не входит в список режимов"
+    else:
+        return flags[0][2:] if flags else None
+    raise HandoffError(f"{reason}.\n{skill_usage(modes)}", code=2)
+
+
+def mode_line(flag: str, recorded: str) -> str:
+    if flag == recorded:
+        return f"{MODE_FIELD}: {flag}, из снимка и флага"
+    if recorded:
+        return f"{MODE_FIELD}: {flag} по флагу, в снимке был {recorded}"
+    return f"{MODE_FIELD}: {flag} по флагу, в снимке режима нет"
+
+
+def state_briefing(layout: Layout, registry: Registry, flag: str | None) -> list[str]:
+    archived_paths = layout.archived()
+    archived = [path.name for path in archived_paths]
     if layout.session.is_file():
         snapshot = read_snapshot(layout.session)
         schema = "схема не распознана" if snapshot.schema is None else f"схема {snapshot.schema}"
         taken = f"снят {snapshot.value(TIME_FIELD)}" if snapshot.time else "время не распознано"
         lines = [f"Снимок: {SESSION_NAME}, {schema}, {taken}, рантайм {snapshot.runtime_id(registry)}"]
         for field in read_snapshot(TEMPLATE_PATH).enumerations:
-            lines.append(f"{field}: {snapshot.value(field) or 'в снимке не указан'}")
+            if field == MODE_FIELD and flag is not None:
+                lines.append(mode_line(flag, snapshot.value(field)))
+            else:
+                lines.append(f"{field}: {snapshot.value(field) or 'в снимке не указан'}")
         reading = "«Возобновление сессии», затем снимок"
     elif archived:
         lines = [f"Снимок: {SESSION_NAME} нет. Последний снимок лежит в архиве."]
+        if flag is not None:
+            lines.append(mode_line(flag, read_snapshot(archived_paths[-1]).value(MODE_FIELD)))
         reading = f"«Возобновление сессии», затем {ARCHIVE_NAME}/{archived[-1]}"
     else:
         lines = ["Снимок: нет. Это первая сессия в этом клоне."]
+        if flag is not None:
+            lines.append(mode_line(flag, ""))
         reading = "«Первая сессия»"
     if layout.prepared.is_file():
         lines.append(
@@ -558,11 +594,18 @@ def state_briefing(layout: Layout, registry: Registry) -> list[str]:
 
 
 def cmd_start(args: argparse.Namespace) -> int:
+    flag = None
+    lines: list[str] = []
+    if args.mode:
+        modes = read_snapshot(TEMPLATE_PATH).enumerations[MODE_FIELD]
+        flag = requested_mode(sys.stdin.buffer.read().decode("utf-8", errors="replace").split(), modes)
+        if flag is None:
+            lines.append(skill_usage(modes))
     registry = load_registry(RUNTIME_CONFIG_DIR)
-    lines = runtime_briefing(registry, args.runtime, os.environ)
+    lines += runtime_briefing(registry, args.runtime, os.environ)
     layout = discover_layout()
     lines += [f"Состояние: {layout.state_dir}", f"Рабочая копия: {layout.working_copy}"]
-    lines += state_briefing(layout, registry)
+    lines += state_briefing(layout, registry, flag)
     print("\n".join(lines))
     return 0
 
@@ -668,6 +711,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     commands = parser.add_subparsers(dest="command", required=True)
     start = commands.add_parser("start")
     start.add_argument("--runtime")
+    start.add_argument("--mode", action="store_true")
     start.set_defaults(run=cmd_start)
     check = commands.add_parser("check")
     check.add_argument("path", nargs="?", type=Path)

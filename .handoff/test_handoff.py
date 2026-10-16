@@ -162,13 +162,19 @@ class HandoffCase(unittest.TestCase):
         subprocess.run(["git", *identity, *args], cwd=self.repo, env=self.env(), check=True, capture_output=True)
 
     def run_script(
-        self, *args: str, checkout: Path | None = None, cwd: Path | None = None, **env: str
+        self,
+        *args: str,
+        checkout: Path | None = None,
+        cwd: Path | None = None,
+        stdin: str | None = None,
+        **env: str,
     ) -> subprocess.CompletedProcess[str]:
         script = (checkout or self.repo) / ".handoff" / "handoff.py"
         return subprocess.run(
             [sys.executable, str(script), *args],
             cwd=cwd or self.repo,
             env=self.env(**env),
+            input=stdin,
             capture_output=True,
             encoding="utf-8",
         )
@@ -702,6 +708,134 @@ class StartTest(HandoffCase):
         result = self.run_script("start", "--runtime", "unknown", GIT_DIR=str(self.repo / ".git"))
 
         self.assertEqual(result.stdout.splitlines()[1:3], [f"Состояние: {self.state}", "Рабочая копия: основной клон"])
+
+
+MODE_FIELD = "Режим тьютора"
+SKILL_USAGE = (
+    "использование: chebu-tutor --execute|--guide|--walkthrough|--sandbox|--quiz [цель, тикет, ограничения]"
+)
+
+
+class ModeTest(HandoffCase):
+    def start_with_words(self, words: str) -> subprocess.CompletedProcess[str]:
+        return self.run_script("start", "--runtime", "unknown", "--mode", stdin=words)
+
+    def plain_start(self) -> list[str]:
+        result = self.run_script("start", "--runtime", "unknown")
+        self.assertEqual(result.returncode, 0, output(result))
+        return result.stdout.splitlines()
+
+    def assert_refused(self, result: subprocess.CompletedProcess[str], reason: str, usage: str = SKILL_USAGE) -> None:
+        self.assertEqual((result.returncode, result.stdout), (2, ""), output(result))
+        lines = result.stderr.splitlines()
+        self.assertTrue(lines[0].startswith("ошибка:"), result.stderr)
+        self.assertIn(reason, lines[0])
+        self.assertEqual(lines[-1], usage)
+
+    def test_one_flag_with_student_text_replaces_only_the_mode_line(self) -> None:
+        self.session.write_text(filled_snapshot(), encoding="utf-8")
+        recorded = f"{MODE_FIELD}: execute"
+        plain = self.plain_start()
+        self.assertIn(recorded, plain)
+
+        result = self.start_with_words("--guide тикет EDU-02, код пишу сам. DeepSeek не запускать.")
+
+        self.assertEqual((result.returncode, result.stderr), (0, ""), output(result))
+        changed = f"{MODE_FIELD}: guide по флагу, в снимке был execute"
+        self.assertEqual(result.stdout.splitlines(), [changed if line == recorded else line for line in plain])
+
+    def test_flag_equal_to_snapshot_mode_is_confirmed(self) -> None:
+        self.session.write_text(filled_snapshot(), encoding="utf-8")
+
+        result = self.start_with_words("--execute")
+
+        self.assertEqual(result.returncode, 0, output(result))
+        self.assertIn(f"{MODE_FIELD}: execute, из снимка и флага", result.stdout.splitlines())
+
+    def test_flag_names_absent_snapshot_mode(self) -> None:
+        line = f"{MODE_FIELD}: quiz по флагу, в снимке режима нет"
+        with self.subTest("older snapshot without the field"):
+            self.session.write_text(drop_field(filled_snapshot(), MODE_FIELD), encoding="utf-8")
+            plain = self.plain_start()
+
+            result = self.start_with_words("--quiz")
+
+            absent = f"{MODE_FIELD}: в снимке не указан"
+            self.assertEqual(result.stdout.splitlines(), [line if entry == absent else entry for entry in plain])
+        with self.subTest("first session"):
+            self.session.unlink()
+            plain = self.plain_start()
+
+            result = self.start_with_words("--quiz")
+
+            after = plain.index("Снимок: нет. Это первая сессия в этом клоне.") + 1
+            self.assertEqual(result.stdout.splitlines(), [*plain[:after], line, *plain[after:]])
+
+    def test_flag_compares_with_newest_archived_snapshot_when_session_is_missing(self) -> None:
+        self.archive.mkdir()
+        older = set_field(filled_snapshot(), MODE_FIELD, "`guide`")
+        (self.archive / "20261012T180500000000Z-codex.md").write_text(older, encoding="utf-8")
+        (self.archive / "20261013T080000000000Z-claude.md").write_text(filled_snapshot(), encoding="utf-8")
+        plain = self.plain_start()
+
+        result = self.start_with_words("--quiz")
+
+        after = plain.index("Снимок: SESSION.md нет. Последний снимок лежит в архиве.") + 1
+        line = f"{MODE_FIELD}: quiz по флагу, в снимке был execute"
+        self.assertEqual(result.stdout.splitlines(), [*plain[:after], line, *plain[after:]])
+
+    def test_no_flag_prints_usage_then_unchanged_briefing(self) -> None:
+        self.session.write_text(filled_snapshot(), encoding="utf-8")
+        plain = self.plain_start()
+        for words in ("тикет EDU-02, код пишу сам", ""):
+            with self.subTest(words=words):
+                result = self.start_with_words(words)
+
+                self.assertEqual((result.returncode, result.stderr), (0, ""), output(result))
+                self.assertEqual(result.stdout.splitlines(), [SKILL_USAGE, *plain])
+
+    def test_two_flags_are_refused_before_briefing(self) -> None:
+        self.session.write_text(filled_snapshot(), encoding="utf-8")
+        for words, count in (("--guide --quiz", 2), ("--guide тикет EDU-02 --guide", 2), ("--guide --quiz --sandbox", 3)):
+            with self.subTest(words=words):
+                self.assert_refused(self.start_with_words(words), f"получено {count}")
+
+    def test_unsubstituted_placeholder_is_refused(self) -> None:
+        self.session.write_text(filled_snapshot(), encoding="utf-8")
+        for words in ("$ARGUMENTS", "--quiz $ARGUMENTS"):
+            with self.subTest(words=words):
+                self.assert_refused(self.start_with_words(words), "осталось $ARGUMENTS")
+
+    def test_flag_outside_the_list_is_refused(self) -> None:
+        for flag in ("--exec", "--help", "--Guide", "--"):
+            with self.subTest(flag=flag):
+                self.assert_refused(self.start_with_words(f"{flag} тикет EDU-02"), f"флаг {flag} не входит")
+
+    def test_quotes_dollars_and_newlines_do_not_change_the_parse(self) -> None:
+        words = "тикет \"EDU-02\" don't $HOME `id` $(id)\n--walkthrough\nразберём agent_loop()"
+
+        result = self.start_with_words(words)
+
+        self.assertEqual(result.returncode, 0, output(result))
+        self.assertIn(f"{MODE_FIELD}: walkthrough по флагу, в снимке режима нет", result.stdout.splitlines())
+
+    def test_flags_follow_the_mode_enumeration_of_the_template(self) -> None:
+        modes = "execute / guide / walkthrough / sandbox / quiz / pair"
+        self.template.write_text(set_field(TEMPLATE, MODE_FIELD, f"`<{modes}>`"), encoding="utf-8")
+        usage = SKILL_USAGE.replace("--quiz", "--quiz|--pair")
+
+        accepted = self.start_with_words("--pair")
+
+        self.assertEqual(accepted.returncode, 0, output(accepted))
+        self.assertIn(f"{MODE_FIELD}: pair по флагу, в снимке режима нет", accepted.stdout.splitlines())
+        self.assert_refused(self.start_with_words("--exec"), "флаг --exec не входит", usage)
+
+    def test_without_mode_key_stdin_is_ignored(self) -> None:
+        plain = self.plain_start()
+
+        result = self.run_script("start", "--runtime", "unknown", stdin="--exec --guide")
+
+        self.assertEqual((result.returncode, result.stdout.splitlines()), (0, plain), output(result))
 
 
 class CommandLineTest(HandoffCase):
