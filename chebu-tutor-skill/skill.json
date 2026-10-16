@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "name": "chebu-tutor",
+  "version": "0.1.0",
+  "description": "Ведёт учебную сессию chebupelka-jev в режиме, заданном флагом",
+  "requires": {
+    "handoff_schema": 2,
+    "chebu_min_version": "0.1.4"
+  }
+}

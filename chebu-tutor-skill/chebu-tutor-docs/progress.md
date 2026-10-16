@@ -6,7 +6,7 @@
 |---|---|---|---|---|
 | 0. Пакет документации | [README.md](README.md) | Готово | [PR #29](https://github.com/alanbigulov/chebupelka-jev/pull/29) слит 2026-10-15T17:48:08Z, коммит `a434f00` в `main` | 2026-10-16 |
 | 1. Пробный навык в шести рантаймах | [01-runtime-probe.md](stages/01-runtime-probe.md) | Готово | 18 строк [журнала проб](runtime-adapters.md#журнал-проб): все шесть рантаймов находят навык, текст вызова доходит без изменений. Решения D-12–D-14 в [журнале](architecture.md#журнал-решений). [PR #30](https://github.com/alanbigulov/chebupelka-jev/pull/30) слит 2026-10-16T15:56:13Z, коммит `7cb1b18` в `main` | 2026-10-16 |
-| 2. Каркас | [02-scaffold.md](stages/02-scaffold.md) | Бэклог | нет | |
+| 2. Каркас | [02-scaffold.md](stages/02-scaffold.md) | Проверка | [skill.json](../skill.json) совпадает с формой из [architecture.md](architecture.md#структуры-данных). Четыре теста [test_skill_json.py](../tests/test_skill_json.py) проходят; дефекты `version` `0.1` и `handoff_schema` 3 дают падение с именем поля. Запись в [CHANGELOG навыка](../CHANGELOG.md). Ветка `chebu-tutor/stage-02`; «Готово» ставит следующая сессия после слияния PR этапа | 2026-10-16 |
 | 3. Канонический текст и проверка флага | [03-canonical-source.md](stages/03-canonical-source.md) | Бэклог | нет | |
 | 4. Генератор и проверка синхронизации | [04-sync.md](stages/04-sync.md) | Бэклог | нет | |
 | 5. Адаптеры в рантаймах и документы проекта | [05-install.md](stages/05-install.md) | Бэклог | нет | |
