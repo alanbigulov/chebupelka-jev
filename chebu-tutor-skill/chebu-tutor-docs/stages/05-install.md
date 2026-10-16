@@ -21,7 +21,7 @@
 
 ## Шаги
 
-1. Выполни `python3 chebu-tutor-skill/tools/sync.py`. Сравни список записанных файлов с путями из блоков `skill`.
+1. Выполни `python3 chebu-tutor-skill/tools/sync.py`. Сравни список записанных файлов и ссылок с путями из блоков `skill`. `readlink .agents/skills/chebu-tutor` печатает `../../.claude/skills/chebu-tutor`.
 2. Выполни `python3 chebu-tutor-skill/tools/sync.py --check`. Ожидаемый код выхода 0.
 3. Проверь, что Git не игнорирует адаптеры: `git check-ignore <путь>` для каждого пути должен завершиться кодом 1.
 4. Добавь в раздел 4 project-structure.md строки для канонического текста, генератора и каталогов адаптеров. Обнови дерево раздела 3 и добавь строку в журнал раздела 9.
