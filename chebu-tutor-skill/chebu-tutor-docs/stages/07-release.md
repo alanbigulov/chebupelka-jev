@@ -8,7 +8,7 @@
 
 | Условие | Команда | Ожидаемый результат |
 |---|---|---|
-| Этап 6 готов | Строка этапа 6 в [progress.md](../progress.md) | Статус «Готово» |
+| Этап 6 готов | Строка этапа 6 в [progress.md](../progress.md), затем `gh pr view <номер PR этапа 6> -R alanbigulov/chebupelka-jev` | «Готово», либо «Проверка» и PR в состоянии `MERGED` |
 | HEAD совпадает с `origin/main` | `git fetch origin`, затем `git rev-parse HEAD origin/main` | Два одинаковых SHA |
 | Рабочее дерево чистое | `git status --short` | Пустой вывод |
 | Тега ещё нет | `git tag --list 'chebu-tutor-v*'` | Пустой вывод |
@@ -39,7 +39,8 @@
 
 ## Что записать
 
-- Строку этапа 7 в [progress.md](../progress.md) со ссылкой на тег.
+- Статус «Готово» этапу 6 в [progress.md](../progress.md) со ссылкой на слитый PR этапа 6, первым коммитом ветки.
+- Строку этапа 7 в progress.md со ссылкой на тег.
 - Раздел `[0.1.0]` в CHANGELOG навыка и строку в CHANGELOG проекта.
 
 ## Границы
