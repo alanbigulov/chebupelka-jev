@@ -11,6 +11,10 @@
     "headless": "codex exec \"{prompt}\"",
     "continue": "codex resume --last"
   },
+  "skill": {
+    "dir": ".agents/skills/chebu-tutor",
+    "link_to": ".claude/skills/chebu-tutor"
+  },
   "checked": {
     "date": "2026-10-13",
     "cli_version": "0.162.1",

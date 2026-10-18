@@ -4,7 +4,17 @@
 
 ## Статус
 
-Этап 3: проверка флага и канонический текст. Есть [skill.json](skill.json) с версией `0.1.0`, [CHANGELOG](CHANGELOG.md) навыка, канонический текст [source/SKILL.md](source/SKILL.md) и тесты. Флаг проверяет ключ `--mode` у `python3 .handoff/handoff.py start`. Навык ещё нельзя вызвать: генератора и адаптеров нет. Статус этапов ведёт [progress.md](chebu-tutor-docs/progress.md).
+Этап 4: генератор адаптеров. Есть [skill.json](skill.json) с версией `0.1.0`, [CHANGELOG](CHANGELOG.md) навыка, папка навыка [source/](source/) с каноническим текстом `SKILL.md` и файлом Codex `agents/openai.yaml`, генератор [tools/sync.py](tools/sync.py) и тесты. Флаг проверяет ключ `--mode` у `python3 .handoff/handoff.py start`. Навык ещё нельзя вызвать: адаптеры в настоящем дереве запишет этап 5. Статус этапов ведёт [progress.md](chebu-tutor-docs/progress.md).
+
+## Генератор
+
+Из корня репозитория:
+
+```bash
+python3 chebu-tutor-skill/tools/sync.py --check
+```
+
+Команда ничего не пишет. Код 0 означает, что адаптеры совпадают с источниками. Код 1 означает расхождение: строки `ошибка:` называют каждый путь. Без ключа генератор записывает адаптеры по блокам `skill` из `runtime-config/runtimes/`. До этапа 5 его запускают только тесты на временной копии дерева.
 
 ## Тесты
 
@@ -23,8 +33,9 @@ python3 -m unittest discover -s chebu-tutor-skill/tests -v
 | `chebu-tutor-docs/` | Документация и поэтапные инструкции разработки | Есть |
 | `skill.json` | Имя, версия и требования навыка | Есть, этап 2 |
 | `CHANGELOG.md` | История версий навыка | Есть, этап 2 |
-| `tests/` | Тесты навыка | Есть с этапа 2, дополняются на этапах 3–4 |
+| `tests/` | Тесты навыка | Есть с этапа 2, дополнены на этапах 3–4 |
 | `source/SKILL.md` | Канонический текст навыка | Есть, этап 3 |
-| `tools/sync.py` | Генератор адаптеров и проверка синхронизации | 4 |
+| `source/agents/openai.yaml` | Запрет вызова моделью для Codex | Есть, этап 4 |
+| `tools/sync.py` | Генератор адаптеров и проверка синхронизации | Есть, этап 4 |
 
 Адаптеры будут лежать вне этого каталога, в `.claude/skills/chebu-tutor/` и `.agents/skills/chebu-tutor/`, которые читают рантаймы. Почему так, объясняет [architecture.md](chebu-tutor-docs/architecture.md).

@@ -11,6 +11,9 @@
     "headless": "cursor-agent -p \"{prompt}\"",
     "continue": "cursor-agent --continue"
   },
+  "skill": {
+    "dir": ".claude/skills/chebu-tutor"
+  },
   "checked": {
     "date": "2026-10-13",
     "cli_version": "2026.10.01-e373342",
