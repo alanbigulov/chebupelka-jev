@@ -11,6 +11,9 @@
     "headless": "devin -p \"{prompt}\"",
     "continue": "devin --continue"
   },
+  "skill": {
+    "dir": ".claude/skills/chebu-tutor"
+  },
   "checked": {
     "date": "2026-10-13",
     "cli_version": "3000.11.3",

@@ -11,6 +11,9 @@
     "headless": "claude -p \"{prompt}\"",
     "continue": "claude --continue"
   },
+  "skill": {
+    "dir": ".claude/skills/chebu-tutor"
+  },
   "checked": {
     "date": "2026-10-13",
     "cli_version": "2.1.296",

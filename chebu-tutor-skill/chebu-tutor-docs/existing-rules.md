@@ -80,6 +80,8 @@ python3 -m unittest discover -s .handoff -p 'test_*.py' -v
 
 Поля файла рантайма: `schema`, `id`, `name`, `aliases`, `cli`, `entry_files`, `detect_env`, `commands` (`start`, `headless`, `continue`) и `checked` (`date`, `cli_version`, `confirmed`, `unconfirmed`). Функция `load_runtime` в `handoff.py` читает только `id`, `name`, `aliases`, `entry_files`, `detect_env`, `commands.start` и `checked.unconfirmed`. Остальные ключи она пропускает, поэтому новый блок с фактами об адаптере навыка `handoff.py` не ломает.
 
+Этап 4 добавил в каждый файл блок `skill`: поле `dir` и у Codex поле `link_to` (D-21). Блок читает только генератор `chebu-tutor-skill/tools/sync.py`. Список id генератор получает через `load_registry` из `handoff.py`, поэтому рантайм из `manifest.json` без блока `skill` роняет `--check`.
+
 ## Тикеты, учёт и chebu
 
 | Источник | Что задаёт | Что делает навык |

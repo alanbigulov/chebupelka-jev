@@ -11,6 +11,9 @@
     "headless": "grok -p \"{prompt}\"",
     "continue": "grok --continue"
   },
+  "skill": {
+    "dir": ".claude/skills/chebu-tutor"
+  },
   "checked": {
     "date": "2026-10-13",
     "cli_version": "1.0.52",
