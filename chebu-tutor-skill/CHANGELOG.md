@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+### Приёмка в рантаймах
+
+- Матрица из [verification.md](chebu-tutor-docs/verification.md) выполнена 2026-10-18 в одноразовом клоне: девять случаев в Claude Code 2.1.302, Codex 0.163.0, Cursor 2026.10.16-e3cb207, Devin 3000.11.92 и Grok 1.0.62. Последний запуск каждой из 45 ячеек завершился итогом «Проверено». Журнал приёмки называет команду и наблюдение каждого запуска.
+- Четыре ячейки один раз нарушили правило контракта и прошли при повторе: ENF-106 в случае C у Codex и Devin, ENF-105 и ENF-001 у Devin. ENF-106 нарушено в двух рантаймах, перевод правила ближе к коду ждёт решения владельца.
+- Девять ячеек OpenCode не проверены: модель по умолчанию недоступна, модели `deepseek/*` идут через платный API.
+- В `runtime-config/runtimes/` у пяти рантаймов обновлены `checked.date` и `checked.cli_version`, в `checked.confirmed` добавлена строка о приёмке.
+
 ### Адаптеры в рантаймах
 
 - Генератор записал адаптеры в настоящее дерево: `.claude/skills/chebu-tutor/SKILL.md`, `.claude/skills/chebu-tutor/agents/openai.yaml` и ссылку `.agents/skills/chebu-tutor` на `../../.claude/skills/chebu-tutor`. Новый clone получает команду `/chebu-tutor --<режим>` без установки, в Codex `$chebu-tutor --<режим>`.
