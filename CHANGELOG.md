@@ -26,7 +26,8 @@
 
 ### Навык chebu-tutor
 
-- Добавлен каталог [chebu-tutor-skill/](chebu-tutor-skill/README.md) с пакетом документации [chebu-tutor-docs](chebu-tutor-skill/chebu-tutor-docs/README.md). Пакет описывает навык, который ведёт учебную сессию в режиме из флага `--execute`, `--guide`, `--walkthrough`, `--sandbox` или `--quiz` одинаково в шести рантаймах: контракт, архитектуру, свою SemVer с тегами `chebu-tutor-vX.Y.Z`, факты о каталогах навыков рантаймов и семь этапов разработки для сессий Claude Code. Кода навыка пока нет.
+- Добавлен каталог [chebu-tutor-skill/](chebu-tutor-skill/README.md) с пакетом документации [chebu-tutor-docs](chebu-tutor-skill/chebu-tutor-docs/README.md). Пакет описывает навык, который ведёт учебную сессию в режиме из флага `--execute`, `--guide`, `--walkthrough`, `--sandbox` или `--quiz` одинаково в шести рантаймах: контракт, архитектуру, свою SemVer с тегами `chebu-tutor-vX.Y.Z`, факты о каталогах навыков рантаймов и семь этапов разработки для сессий Claude Code.
+- Навык `chebu-tutor` установлен в клоне: адаптеры лежат в `.claude/skills/chebu-tutor/` и `.agents/skills/chebu-tutor`. Ученик начинает сессию командой `/chebu-tutor --<режим>`, в Codex `$chebu-tutor --<режим>`, как описывает [tutor-modes.md](coding-agent-developement/tutor-modes.md#начать-сессию-командой-chebu-tutor). Изменения навыка ведёт [CHANGELOG навыка](chebu-tutor-skill/CHANGELOG.md).
 
 ## [0.1.4], 2026-10-13
 

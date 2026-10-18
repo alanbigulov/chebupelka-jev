@@ -1,0 +1,3 @@
+# Сгенерировано chebu-tutor-skill/tools/sync.py из chebu-tutor-skill/source/agents/openai.yaml. Не правь вручную: измени источник и выполни python3 chebu-tutor-skill/tools/sync.py.
+policy:
+  allow_implicit_invocation: false

@@ -8,7 +8,7 @@
 
 | Условие | Команда | Ожидаемый результат |
 |---|---|---|
-| Этап 5 готов и слит | `git fetch origin`, затем `git log --oneline -1 origin/main -- chebu-tutor-skill/source/SKILL.md` | Печатается коммит |
+| Этап 5 готов и слит | `git fetch origin`, затем `git log --oneline -1 origin/main -- .claude/skills/chebu-tutor/SKILL.md` | Печатается коммит |
 | Адаптеры синхронны | `python3 chebu-tutor-skill/tools/sync.py --check` | Код выхода 0 |
 | Владелец разрешил запуски | Вопрос владельцу | Названо число запусков, до 54 и повторы |
 
