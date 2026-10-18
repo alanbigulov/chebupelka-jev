@@ -8,7 +8,8 @@
 
 | Условие | Команда | Ожидаемый результат |
 |---|---|---|
-| Этап 5 готов и слит | `git fetch origin`, затем `git log --oneline -1 origin/main -- .claude/skills/chebu-tutor/SKILL.md` | Печатается коммит |
+| Этап 5 готов | Строка этапа 5 в [progress.md](../progress.md), затем `gh pr view 34 -R alanbigulov/chebupelka-jev` | «Готово», либо «Проверка» и PR в состоянии `MERGED` |
+| Адаптеры этапа 5 в `main` | `git fetch origin`, затем `git log --oneline -1 origin/main -- .claude/skills/chebu-tutor/SKILL.md` | Печатается коммит |
 | Адаптеры синхронны | `python3 chebu-tutor-skill/tools/sync.py --check` | Код выхода 0 |
 | Владелец разрешил запуски | Вопрос владельцу | Названо число запусков, до 54 и повторы |
 
@@ -37,7 +38,8 @@
 
 ## Что записать
 
-- Строку этапа 6 в [progress.md](../progress.md).
+- Статус «Готово» этапу 5 в [progress.md](../progress.md) со ссылкой на слитый PR #34, первым коммитом ветки.
+- Строку этапа 6 в progress.md и статус «К выполнению» этапу 7.
 - Журнал приёмки в verification.md.
 - Запись в `[Unreleased]` CHANGELOG навыка о результатах приёмки.
 
