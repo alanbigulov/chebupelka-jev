@@ -33,6 +33,7 @@
 | Понять, как проходит учебная сессия | [Как проходит учебная сессия](#как-проходит-учебная-сессия) |
 | Работать с кодинговым агентом в любом рантайме | [AGENTS.md](AGENTS.md) и [протокол передачи сессии](.handoff/README.md) |
 | Выбрать, кто пишет код: агент или ты | [Режимы тьютора](coding-agent-developement/tutor-modes.md) |
+| Начать сессию одной командой с флагом режима | [Команда `/chebu-tutor`](coding-agent-developement/tutor-modes.md#начать-сессию-командой-chebu-tutor) |
 | Понять структуру и причины решений | [project-structure.md](coding-agent-developement/project-structure.md) |
 | Выбрать следующую доработку | [development-roadmap.md](coding-agent-developement/development-roadmap.md) |
 | Выбрать задачу | [Тикеты EDU](coding-agent-developement/tickets/README.md) и [правила учёта](coding-agent-developement/project-tracking.md) |
@@ -190,6 +191,7 @@ chebupelka-jev/
 ├── AGENTS.md, CLAUDE.md                    правила для ведущего агента
 ├── .handoff/                               протокол и скрипт передачи сессии
 ├── runtime-config/                         конфигурации рантаймов
+├── .claude/skills/, .agents/skills/        адаптеры навыка chebu-tutor
 ├── chebu-tutor-skill/                      разработка навыка chebu-tutor
 ├── agent/                                  исполняемый Python-проект
 │   ├── chebu.py
