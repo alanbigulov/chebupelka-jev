@@ -512,13 +512,9 @@ class SaveTest(HandoffCase):
         first = lines.index(RESUME_HEADER) + 1
         last = first + len(MANIFEST["runtimes"])
         commands = lines[first:last]
-        # Codex mentions a skill with $, the other five runtimes with /. Devin does not attach a skill named in
-        # its launch prompt, so its line opens Devin without a message and names the call in a shell comment.
-        calls = {i: ("$" if i == "codex" else "/") + "chebu-tutor --quiz" for i in MANIFEST["runtimes"]}
-        expected = ["" if i == "devin" else calls[i] for i in MANIFEST["runtimes"]]
+        # Codex mentions a skill with $, the other five runtimes with /.
+        expected = [("$" if i == "codex" else "/") + "chebu-tutor --quiz" for i in MANIFEST["runtimes"]]
         self.assertEqual([shell_message(command) for command in commands], expected)
-        devin = commands[MANIFEST["runtimes"].index("devin")]
-        self.assertTrue(devin.endswith(f"# затем набери {calls['devin']}"), devin)
         self.assertEqual([command.split()[0] for command in commands], [RUNTIMES[i]["cli"] for i in MANIFEST["runtimes"]])
         self.assertEqual(lines[last:], [f"Без навыка: «{MANIFEST['resume_prompt']}»"])
 

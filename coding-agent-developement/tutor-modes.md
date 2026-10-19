@@ -170,7 +170,7 @@
 | Claude Code | `claude` | `/chebu-tutor --guide` |
 | Codex | `codex` | `$chebu-tutor --guide` |
 | Cursor | `cursor-agent` | `/chebu-tutor --guide` |
-| Devin | `devin` | `/chebu-tutor --guide`, набрать в открытой сессии |
+| Devin | `devin` | `/chebu-tutor --guide` |
 | Grok | `grok` | `/chebu-tutor --guide` |
 | OpenCode | `opencode` | `/chebu-tutor --guide`, набрать целиком |
 
@@ -181,13 +181,13 @@
   claude "/chebu-tutor --guide"
   codex '$chebu-tutor --guide'
   cursor-agent "/chebu-tutor --guide"
-  devin  # затем набери /chebu-tutor --guide
+  devin -- "/chebu-tutor --guide"
   grok "/chebu-tutor --guide"
   opencode --prompt "/chebu-tutor --guide"
 Без навыка: «Продолжи работу по AGENTS.md и .handoff/SESSION.md.»
 ```
 
-Ученик запускает одну из команд в корне клона или набирает ту же команду навыка в открытом рантайме. У Codex команда стоит в одинарных кавычках: в двойных shell подставил бы `$chebu` как переменную. Devin 3000.11.92 при запуске `devin -- "/chebu-tutor --execute"` навык не подхватил, поэтому его строка открывает `devin` без сообщения, а команду навыка ученик набирает сам. Шаблоны команд хранит поле `commands.resume` файлов `runtime-config/runtimes/<id>.json`. Последняя строка называет промпт для сессии без навыка. Команды `continue` из `runtime-config/runtimes/<id>.json`, например `claude --continue` и `codex resume --last`, открывают прошлый чат рантайма. Свежей сессии они не нужны: контекст переносит снимок.
+Ученик запускает одну из команд в корне клона или набирает ту же команду навыка в открытом рантайме. У Codex команда стоит в одинарных кавычках: в двойных shell подставил бы `$chebu` как переменную. Шаблоны команд хранит поле `commands.resume` файлов `runtime-config/runtimes/<id>.json`. Последняя строка называет промпт для сессии без навыка. Команды `continue` из `runtime-config/runtimes/<id>.json`, например `claude --continue` и `codex resume --last`, открывают прошлый чат рантайма. Свежей сессии они не нужны: контекст переносит снимок.
 
 ### Команда по ситуации
 
