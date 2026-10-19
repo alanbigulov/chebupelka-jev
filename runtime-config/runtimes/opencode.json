@@ -16,7 +16,7 @@
     "dir": ".claude/skills/chebu-tutor"
   },
   "checked": {
-    "date": "2026-10-18",
+    "date": "2026-10-19",
     "cli_version": "2.0.32",
     "confirmed": [
       "Команды start, headless и continue есть в справке opencode --help и opencode run --help.",
@@ -24,11 +24,11 @@
       "Сессия загружает AGENTS.md сама. В эстафете 2026-10-13 она выполнила handoff.py start первой командой и перед этим файл не читала.",
       "Имя OPENCODE есть в окружении сессии эстафеты 2026-10-13. В сессиях остальных пяти рантаймов его нет.",
       "Имя OPENCODE_CONFIG_DIR есть в сессии Claude Code, имя ORCA_OPENCODE_AGENT есть в сессиях Grok, Cursor и Devin. Признаком OpenCode они не служат.",
-      "Приёмка навыка chebu-tutor 0.1.0 2026-10-18: девять случаев матрицы из chebu-tutor-skill/chebu-tutor-docs/verification.md прошли в OpenCode 2.0.32 с итогом «Проверено». Навык вызывал session.prompt с полем skills через API сервера opencode serve, команда opencode run \"/chebu-tutor …\" навык не загрузила."
+      "Приёмка навыка chebu-tutor 0.1.0 2026-10-18: девять случаев матрицы из chebu-tutor-skill/chebu-tutor-docs/verification.md прошли в OpenCode 2.0.32 с итогом «Проверено». Навык вызывал session.prompt с полем skills через API сервера opencode serve, команда opencode run \"/chebu-tutor …\" навык не загрузила.",
+      "Команда resume 2026-10-19 в 2.0.32: владелец запустил opencode --prompt \"/chebu-tutor --execute\" из shell в корне основного клона. start с --mode напечатал «Режим тьютора: execute, из снимка и флага»."
     ],
     "unconfirmed": [
-      "Распознавание без ключа --runtime в сессии OpenCode не запускалось. Значение OPENCODE не читалось.",
-      "Команда resume не запускалась: подхватывает ли сессия, открытая этой командой, навык chebu-tutor, не наблюдалось."
+      "Распознавание без ключа --runtime в сессии OpenCode не запускалось. Значение OPENCODE не читалось."
     ]
   }
 }

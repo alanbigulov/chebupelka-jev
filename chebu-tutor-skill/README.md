@@ -95,7 +95,7 @@
 | Claude Code | `claude` | `/chebu-tutor --guide` | Нет |
 | Codex | `codex` | `$chebu-tutor --guide` | Codex вызывает навыки через `$`, а не через `/` |
 | Cursor | `cursor-agent` | `/chebu-tutor --guide` | Каталог клона должен быть доверенным |
-| Devin | `devin` | `/chebu-tutor --guide` | Каталог клона должен быть доверенным |
+| Devin | `devin` | `/chebu-tutor --guide` | Набирай команду в открытой сессии: из `devin -- "/chebu-tutor --guide"` навык не подхватывается. Каталог клона должен быть доверенным |
 | Grok Build | `grok` | `/chebu-tutor --guide` | Нет |
 | OpenCode | `opencode` | `/chebu-tutor --guide` | В подсказке `/` навыка нет. Набери команду целиком: агент найдёт навык по строке [AGENTS.md](../AGENTS.md) |
 
@@ -175,13 +175,13 @@
   claude "/chebu-tutor --guide"
   codex '$chebu-tutor --guide'
   cursor-agent "/chebu-tutor --guide"
-  devin -- "/chebu-tutor --guide"
+  devin  # затем набери /chebu-tutor --guide
   grok "/chebu-tutor --guide"
   opencode --prompt "/chebu-tutor --guide"
 Без навыка: «Продолжи работу по AGENTS.md и .handoff/SESSION.md.»
 ```
 
-Запусти нужную команду в корне клона или набери `/chebu-tutor --guide` в открытом рантайме. Последняя строка нужна, если навыка нет.
+Запусти нужную команду в корне клона или набери `/chebu-tutor --guide` в открытом рантайме. Строка Devin только открывает `devin`: команду навыка набери в нём сам. Последняя строка нужна, если навыка нет.
 
 > [!TIP]
 > Закрывай сессию перед паузой и перед сменой рантайма. Изменения после последнего сохранения, например смена режима, в снимок не попадают.
@@ -200,6 +200,7 @@
 | В подсказке `/` OpenCode навыка нет | OpenCode 2.0.32 не показывает этот навык в подсказке | Набери `/chebu-tutor --guide` целиком и отправь |
 | Рантайм не знает команду в ветке тикета | Ветка начата от тега без навыка, например v0.1.4 | Проверь `ls .claude/skills/chebu-tutor`. Если папки нет, начни сессию [промптом](#без-навыка-промпт) |
 | В ответе нет строки `Режим тьютора:` | Рантайм не приложил текст навыка к сообщению | Напиши: «выполни навык по .claude/skills/chebu-tutor/SKILL.md» |
+| Devin, запущенный командой `devin -- "/chebu-tutor --execute"`, выполнил `start` без `--mode` или упал с «An internal error occurred» | Devin 3000.11.92 не прикладывает навык к сообщению, переданному при запуске | Открой `devin` без сообщения и набери `/chebu-tutor --execute` в сессии |
 | Cursor или Devin отказываются работать в каталоге | Каталог не отмечен доверенным | Отметь каталог клона доверенным в рантайме |
 | Codex в git worktree не сохраняет снимок: `PermissionError` | Песочница Codex не пускает запись в основной клон | Выполни `python3 .handoff/handoff.py save` из worktree в обычном терминале |
 

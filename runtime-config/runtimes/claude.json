@@ -16,17 +16,16 @@
     "dir": ".claude/skills/chebu-tutor"
   },
   "checked": {
-    "date": "2026-10-18",
-    "cli_version": "2.1.302",
+    "date": "2026-10-19",
+    "cli_version": "2.1.303",
     "confirmed": [
       "Команды start, headless и continue есть в справке claude --help.",
       "Сессия Claude Code выставляет переменную окружения CLAUDECODE=1.",
       "Claude Code загружает CLAUDE.md; строка @AGENTS.md в нём подключает общий файл правил.",
       "В эстафете 2026-10-13 команда start без ключа --runtime распознала рантайм по CLAUDECODE. В сессиях остальных пяти рантаймов этой переменной нет.",
-      "Приёмка навыка chebu-tutor 0.1.0 2026-10-18: девять случаев матрицы из chebu-tutor-skill/chebu-tutor-docs/verification.md прошли в claude -p 2.1.302 с итогом «Проверено»."
+      "Приёмка навыка chebu-tutor 0.1.0 2026-10-18: девять случаев матрицы из chebu-tutor-skill/chebu-tutor-docs/verification.md прошли в claude -p 2.1.302 с итогом «Проверено».",
+      "Команда resume 2026-10-19 в 2.1.303: владелец запустил claude \"/chebu-tutor --execute\" из shell в корне основного клона. Навык загрузился, start с --mode напечатал «Режим тьютора: execute, из снимка и флага». Тот же вызов, набранный в открытой сессии, дал ту же строку."
     ],
-    "unconfirmed": [
-      "Команда resume не запускалась: подхватывает ли сессия, открытая этой командой, навык chebu-tutor, не наблюдалось."
-    ]
+    "unconfirmed": []
   }
 }

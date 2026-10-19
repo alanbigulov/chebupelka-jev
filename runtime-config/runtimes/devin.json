@@ -10,25 +10,26 @@
     "start": "devin -- \"{prompt}\"",
     "headless": "devin -p \"{prompt}\"",
     "continue": "devin --continue",
-    "resume": "devin -- \"/chebu-tutor --{mode}\""
+    "resume": "devin  # затем набери /chebu-tutor --{mode}"
   },
   "skill": {
     "dir": ".claude/skills/chebu-tutor"
   },
   "checked": {
-    "date": "2026-10-18",
+    "date": "2026-10-19",
     "cli_version": "3000.11.92",
     "confirmed": [
       "Команды start, headless и continue есть в справке devin --help.",
       "Имя AGENTS.md встречается в исполняемом файле devin.",
       "Сессия загружает AGENTS.md сама. В эстафете 2026-10-13 она выполнила handoff.py start первой командой и перед этим файл не читала.",
       "В сессии эстафеты 2026-10-13 поиск по именам переменных окружения не нашёл имён с подстроками devin, cognition, swe и windsurf. Рантайм называется ключом --runtime devin.",
-      "Приёмка навыка chebu-tutor 0.1.0 2026-10-18: девять случаев матрицы из chebu-tutor-skill/chebu-tutor-docs/verification.md прошли в devin -p 3000.11.92 с ключом --sandbox с итогом «Проверено», случаи B, C и G при повторе. Без интерфейса запись инструментами edit и write потребовала правил Write(...) в .devin/config.local.json."
+      "Приёмка навыка chebu-tutor 0.1.0 2026-10-18: девять случаев матрицы из chebu-tutor-skill/chebu-tutor-docs/verification.md прошли в devin -p 3000.11.92 с ключом --sandbox с итогом «Проверено», случаи B, C и G при повторе. Без интерфейса запись инструментами edit и write потребовала правил Write(...) в .devin/config.local.json.",
+      "Запуск devin -- \"/chebu-tutor --execute\" 2026-10-19 в 3000.11.92 навык не подхватил: модель выполнила start без --mode по шагу 1 AGENTS.md, затем Devin завершил ход ошибкой «An internal error occurred». Поэтому команда resume открывает devin без сообщения, а вызов навыка ученик набирает в открытой сессии."
     ],
     "unconfirmed": [
       "Есть ли у Devin своя переменная для распознавания, не установлено. Полный список имён окружения не снимался. Имя AI_AGENT в сессии есть, значение не читалось. В сессии Claude Code значение AI_AGENT содержит слово claude.",
       "Облачные сессии Devin не видят локальную .handoff/ и в протокол не входят.",
-      "Команда resume не запускалась: подхватывает ли сессия, открытая этой командой, навык chebu-tutor, не наблюдалось."
+      "Вызов навыка chebu-tutor 0.1.0, набранный в открытой сессии Devin, не наблюдался: приёмка шла через devin -p. Запуск devin -- \"/chebu-tutor …\" не повторялся, поэтому постоянен ли сбой, неизвестно."
     ]
   }
 }
