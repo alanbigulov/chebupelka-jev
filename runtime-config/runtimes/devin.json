@@ -9,24 +9,29 @@
   "commands": {
     "start": "devin -- \"{prompt}\"",
     "headless": "devin -p \"{prompt}\"",
-    "continue": "devin --continue"
+    "continue": "devin --continue",
+    "resume": "devin -- \"/chebu-tutor --{mode}\""
   },
   "skill": {
     "dir": ".claude/skills/chebu-tutor"
   },
   "checked": {
-    "date": "2026-10-18",
+    "date": "2026-10-19",
     "cli_version": "3000.11.92",
     "confirmed": [
       "Команды start, headless и continue есть в справке devin --help.",
       "Имя AGENTS.md встречается в исполняемом файле devin.",
       "Сессия загружает AGENTS.md сама. В эстафете 2026-10-13 она выполнила handoff.py start первой командой и перед этим файл не читала.",
       "В сессии эстафеты 2026-10-13 поиск по именам переменных окружения не нашёл имён с подстроками devin, cognition, swe и windsurf. Рантайм называется ключом --runtime devin.",
-      "Приёмка навыка chebu-tutor 0.1.0 2026-10-18: девять случаев матрицы из chebu-tutor-skill/chebu-tutor-docs/verification.md прошли в devin -p 3000.11.92 с ключом --sandbox с итогом «Проверено», случаи B, C и G при повторе. Без интерфейса запись инструментами edit и write потребовала правил Write(...) в .devin/config.local.json."
+      "Приёмка навыка chebu-tutor 0.1.0 2026-10-18: девять случаев матрицы из chebu-tutor-skill/chebu-tutor-docs/verification.md прошли в devin -p 3000.11.92 с ключом --sandbox с итогом «Проверено», случаи B, C и G при повторе. Без интерфейса запись инструментами edit и write потребовала правил Write(...) в .devin/config.local.json.",
+      "Навык chebu-tutor 0.1.0 в 3000.11.92 2026-10-19, два запуска владельца: devin -- \"/chebu-tutor --execute\" с DeepSeek V4.1 Flash Max и /chebu-tutor --execute, набранный в открытой сессии с SWE-2 High. В обоих Devin передал модели тело навыка сообщением пользователя с --execute в heredoc: сессии furtive-steed и powerful-search в ~/.local/share/devin/cli. Обе модели выполнили start без --mode по шагу 1 «Начни сессию» AGENTS.md. После первого запуска Devin завершил ход ошибкой «An internal error occurred».",
+      "Навык 0.1.1 на 3884e70 2026-10-19: devin -- \"/chebu-tutor --execute\" из worktree, сессия necessary-sawfish. Модель DeepSeek V4.1 Flash Max первой проверочной командой выполнила start --runtime devin --mode, но передала в heredoc --guide вместо --execute. Вывод: «Режим тьютора: guide по флагу, в снимке был execute».",
+      "Команда resume с навыком 0.1.1 на 36c3bcb 2026-10-19: devin -- \"/chebu-tutor --execute\" из shell в worktree, сессия miniature-router. Модель DeepSeek V4.1 Flash Max прочитала SKILL.md и выполнила start --runtime devin --mode с --execute: «Режим тьютора: execute, из снимка и флага». Файлы не менялись, агент ждал задачу."
     ],
     "unconfirmed": [
       "Есть ли у Devin своя переменная для распознавания, не установлено. Полный список имён окружения не снимался. Имя AI_AGENT в сессии есть, значение не читалось. В сессии Claude Code значение AI_AGENT содержит слово claude.",
-      "Облачные сессии Devin не видят локальную .handoff/ и в протокол не входят."
+      "Облачные сессии Devin не видят локальную .handoff/ и в протокол не входят.",
+      "С подсказкой start без --mode и новым шагом 1 AGENTS.md (D-31) Devin не запускался."
     ]
   }
 }

@@ -30,6 +30,10 @@ TIME_FIELD = "Время снимка UTC"
 RUNTIME_FIELD = "Рантайм"
 MODE_FIELD = "Режим тьютора"
 ARGUMENTS_PLACEHOLDER = "$ARGUMENTS"
+SKILL_CALL_HINT = (
+    "Если ученик вызвал навык chebu-tutor, эта команда не та: "
+    "выполни команду проверки из шага 2 .claude/skills/chebu-tutor/SKILL.md с ключом --mode."
+)
 SENDER_FIELD_PREFIX = "Отправитель"
 UNKNOWN_RUNTIME = "unknown"
 TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
@@ -58,7 +62,7 @@ class Runtime:
     aliases: tuple[str, ...]
     entry_files: tuple[str, ...]
     detect_env: tuple[str, ...]
-    start_command: str
+    resume_command: str
     unconfirmed: tuple[str, ...]
 
     @property
@@ -117,7 +121,7 @@ def load_runtime(path: Path, runtime_id: str) -> Runtime:
             aliases=tuple(data["aliases"]),
             entry_files=tuple(data["entry_files"]),
             detect_env=tuple(data["detect_env"]),
-            start_command=data["commands"]["start"],
+            resume_command=data["commands"]["resume"],
             unconfirmed=tuple(data["checked"]["unconfirmed"]),
         )
 
@@ -606,6 +610,8 @@ def cmd_start(args: argparse.Namespace) -> int:
     layout = discover_layout()
     lines += [f"Состояние: {layout.state_dir}", f"Рабочая копия: {layout.working_copy}"]
     lines += state_briefing(layout, registry, flag)
+    if not args.mode:
+        lines.append(SKILL_CALL_HINT)
     print("\n".join(lines))
     return 0
 
@@ -692,7 +698,8 @@ def cmd_save(args: argparse.Namespace) -> int:
     print(archive_note)
     print("Продолжить в любом рантайме из корня основного клона:")
     for runtime in registry.runtimes:
-        print("  " + runtime.start_command.replace("{prompt}", registry.resume_prompt))
+        print("  " + runtime.resume_command.replace("{mode}", prepared.value(MODE_FIELD)))
+    print(f"Без навыка: «{registry.resume_prompt}»")
     return 0
 
 

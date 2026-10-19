@@ -25,6 +25,10 @@ PLACEHOLDER = re.compile(r"<[^<>\n]+>")
 ENUMERATION = re.compile(r"<([a-z][a-z0-9_-]*(?: / [a-z][a-z0-9_-]*)+)>")
 LINK_TARGET = re.compile(r"\]\(([^)#\s:]+)\)")
 RESUME_HEADER = "Продолжить в любом рантайме из корня основного клона:"
+SKILL_CALL_HINT = (
+    "Если ученик вызвал навык chebu-tutor, эта команда не та: "
+    "выполни команду проверки из шага 2 .claude/skills/chebu-tutor/SKILL.md с ключом --mode."
+)
 
 # Assembled at run time so that no token-shaped literal sits in the repository.
 SECRETS = (
@@ -42,6 +46,13 @@ def set_field(text: str, field: str, value: str) -> str:
     row = re.compile(rf"^\| {re.escape(field)} \|.*$", flags=re.MULTILINE)
     assert row.search(text), f"no metadata row {field!r} in the template"
     return row.sub(lambda _: f"| {field} | {value} |", text)
+
+
+def shell_message(command: str) -> str:
+    """Return the last argument that sh hands to the program named at the start of command."""
+    _, arguments = command.strip().split(" ", 1)
+    script = 'last() { for word in "$@"; do message=$word; done; printf %s "$message"; }; last ' + arguments
+    return subprocess.run(["sh", "-c", script], capture_output=True, text=True, check=True).stdout
 
 
 def drop_field(text: str, field: str) -> str:
@@ -495,19 +506,21 @@ class SaveTest(HandoffCase):
         self.assertFalse(self.archive.exists())
         self.assertFalse(self.prepared.exists())
 
-    def test_prints_start_command_for_every_registry_runtime(self) -> None:
-        self.prepared.write_text(filled_snapshot(), encoding="utf-8")
+    def test_prints_skill_command_with_the_saved_mode_for_every_registry_runtime(self) -> None:
+        self.prepared.write_text(set_field(filled_snapshot(), MODE_FIELD, "`quiz`"), encoding="utf-8")
 
         result = self.run_script("save")
 
         lines = result.stdout.splitlines()
         self.assertIn(RESUME_HEADER, lines, output(result))
-        expected = [
-            "  " + RUNTIMES[runtime_id]["commands"]["start"].replace("{prompt}", MANIFEST["resume_prompt"])
-            for runtime_id in MANIFEST["runtimes"]
-        ]
-        self.assertEqual(lines[lines.index(RESUME_HEADER) + 1 :], expected)
-        self.assertNotIn("{prompt}", result.stdout)
+        first = lines.index(RESUME_HEADER) + 1
+        last = first + len(MANIFEST["runtimes"])
+        commands = lines[first:last]
+        # Codex mentions a skill with $, the other five runtimes with /.
+        expected = [("$" if i == "codex" else "/") + "chebu-tutor --quiz" for i in MANIFEST["runtimes"]]
+        self.assertEqual([shell_message(command) for command in commands], expected)
+        self.assertEqual([command.split()[0] for command in commands], [RUNTIMES[i]["cli"] for i in MANIFEST["runtimes"]])
+        self.assertEqual(lines[last:], [f"Без навыка: «{MANIFEST['resume_prompt']}»"])
 
 
 class StartTest(HandoffCase):
@@ -615,6 +628,7 @@ class StartTest(HandoffCase):
                 *(f"{field}: {choice}" for field, choice in chosen.items()),
                 "Архив: 2 снимка, последний 20261013T080000000000Z-claude.md",
                 "Дальше: прочитай .handoff/README.md, раздел «Возобновление сессии», затем снимок.",
+                SKILL_CALL_HINT,
             ],
         )
 
@@ -639,6 +653,7 @@ class StartTest(HandoffCase):
                 *(f"{field}: {choices[0]}" for field, choices in enumerated_fields(REAL_TEMPLATE).items()),
                 "Архив: пусто",
                 "Дальше: прочитай .handoff/README.md, раздел «Возобновление сессии», затем снимок.",
+                SKILL_CALL_HINT,
             ],
         )
 
@@ -656,11 +671,12 @@ class StartTest(HandoffCase):
 
         self.assertEqual(result.returncode, 0, output(result))
         self.assertEqual(
-            result.stdout.splitlines()[-3:],
+            result.stdout.splitlines()[-4:],
             [
                 "Снимок: нет. Это первая сессия в этом клоне.",
                 "Архив: пусто",
                 "Дальше: прочитай .handoff/README.md, раздел «Первая сессия».",
+                SKILL_CALL_HINT,
             ],
         )
 
@@ -674,11 +690,12 @@ class StartTest(HandoffCase):
 
         self.assertEqual(result.returncode, 0, output(result))
         self.assertEqual(
-            result.stdout.splitlines()[-3:],
+            result.stdout.splitlines()[-4:],
             [
                 "Снимок: SESSION.md нет. Последний снимок лежит в архиве.",
                 f"Архив: 2 снимка, последний {newest}",
                 f"Дальше: прочитай .handoff/README.md, раздел «Возобновление сессии», затем archive/{newest}.",
+                SKILL_CALL_HINT,
             ],
         )
 
@@ -720,10 +737,20 @@ class ModeTest(HandoffCase):
     def start_with_words(self, words: str) -> subprocess.CompletedProcess[str]:
         return self.run_script("start", "--runtime", "unknown", "--mode", stdin=words)
 
+    def test_plain_start_points_a_skill_call_to_the_check_command(self) -> None:
+        # Devin and OpenCode models ran the plain start of AGENTS.md step 1 after /chebu-tutor.
+        plain = self.run_script("start", "--runtime", "unknown")
+        checked = self.start_with_words("--guide")
+
+        self.assertEqual(plain.stdout.splitlines()[-1], SKILL_CALL_HINT, output(plain))
+        self.assertNotIn(SKILL_CALL_HINT, checked.stdout, output(checked))
+
     def plain_start(self) -> list[str]:
         result = self.run_script("start", "--runtime", "unknown")
         self.assertEqual(result.returncode, 0, output(result))
-        return result.stdout.splitlines()
+        *briefing, hint = result.stdout.splitlines()
+        self.assertEqual(hint, SKILL_CALL_HINT)
+        return briefing
 
     def assert_refused(self, result: subprocess.CompletedProcess[str], reason: str, usage: str = SKILL_USAGE) -> None:
         self.assertEqual((result.returncode, result.stdout), (2, ""), output(result))
@@ -835,7 +862,7 @@ class ModeTest(HandoffCase):
 
         result = self.run_script("start", "--runtime", "unknown", stdin="--exec --guide")
 
-        self.assertEqual((result.returncode, result.stdout.splitlines()), (0, plain), output(result))
+        self.assertEqual((result.returncode, result.stdout.splitlines()), (0, [*plain, SKILL_CALL_HINT]), output(result))
 
 
 class CommandLineTest(HandoffCase):
