@@ -30,6 +30,7 @@
 - Добавлен каталог [chebu-tutor-skill/](chebu-tutor-skill/README.md) с пакетом документации [chebu-tutor-docs](chebu-tutor-skill/chebu-tutor-docs/README.md). Пакет описывает навык, который ведёт учебную сессию в режиме из флага `--execute`, `--guide`, `--walkthrough`, `--sandbox` или `--quiz` одинаково в шести рантаймах: контракт, архитектуру, свою SemVer с тегами `chebu-tutor-vX.Y.Z`, факты о каталогах навыков рантаймов и семь этапов разработки для сессий Claude Code.
 - Навык `chebu-tutor` установлен в клоне: адаптеры лежат в `.claude/skills/chebu-tutor/` и `.agents/skills/chebu-tutor`. Ученик начинает сессию командой `/chebu-tutor --<режим>`, в Codex `$chebu-tutor --<режим>`, как описывает [tutor-modes.md](coding-agent-developement/tutor-modes.md#начать-сессию-командой-chebu-tutor). Изменения навыка ведёт [CHANGELOG навыка](chebu-tutor-skill/CHANGELOG.md).
 - Строка [AGENTS.md](AGENTS.md) о `/chebu-tutor` ведёт на файл навыка, а не на контракт: агент выполняет навык вместо шага 1 «Начни сессию», даже когда рантайм не приложил текст навыка к сообщению. В интерфейсе OpenCode 2.0.32 так и было 2026-10-19: агент начал сессию без проверки флага.
+- Выпущен навык `chebu-tutor` 0.1.0, тег `chebu-tutor-v0.1.0`. Приёмку прошли все 54 ячейки матрицы в шести рантаймах. Состав выпуска и итоги по рантаймам перечисляет [раздел 0.1.0](chebu-tutor-skill/CHANGELOG.md#010-2026-10-19) CHANGELOG навыка. Версия `chebu` не меняется.
 
 ## [0.1.4], 2026-10-13
 

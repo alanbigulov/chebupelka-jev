@@ -1,10 +1,10 @@
 # chebu-tutor-skill
 
-Каталог для разработки навыка `chebu-tutor`: его кода, скриптов и документации. Навык ведёт учебную сессию в режиме, который ученик задаёт флагом команды. Одинаковое поведение в шести рантаймах репозитория проверит приёмка этапа 6.
+Каталог для разработки навыка `chebu-tutor`: его кода, скриптов и документации. Навык ведёт учебную сессию в режиме, который ученик задаёт флагом команды. Одинаковое поведение в шести рантаймах репозитория проверила приёмка этапа 6.
 
 ## Статус
 
-Этап 5: навык установлен, но не выпущен. Генератор [tools/sync.py](tools/sync.py) записал адаптеры в `.claude/skills/chebu-tutor/` и ссылку `.agents/skills/chebu-tutor`. Ученик вызывает навык командой `/chebu-tutor --<режим>`, в Codex `$chebu-tutor --<режим>`, как описывает [tutor-modes.md](../coding-agent-developement/tutor-modes.md#начать-сессию-командой-chebu-tutor). Вызов проверен одним запуском в Claude Code. Приёмку в шести рантаймах проводит этап 6, выпуск `chebu-tutor-v0.1.0` делает этап 7. Версия в [skill.json](skill.json) равна `0.1.0`, тега нет. Флаг проверяет ключ `--mode` у `python3 .handoff/handoff.py start`. Статус этапов ведёт [progress.md](chebu-tutor-docs/progress.md).
+Навык выпущен: версия `0.1.0` в [skill.json](skill.json), тег `chebu-tutor-v0.1.0`. Генератор [tools/sync.py](tools/sync.py) записал адаптеры в `.claude/skills/chebu-tutor/` и ссылку `.agents/skills/chebu-tutor`. Ученик вызывает навык командой `/chebu-tutor --<режим>`, в Codex `$chebu-tutor --<режим>`, как описывает [tutor-modes.md](../coding-agent-developement/tutor-modes.md#начать-сессию-командой-chebu-tutor). Приёмка прошла в Claude Code, Codex, Cursor, Devin, Grok Build и OpenCode: у всех 54 ячеек матрицы итог «Проверено». Итоги по рантаймам перечисляет [CHANGELOG.md](CHANGELOG.md), каждый запуск записан в [журнале приёмки](chebu-tutor-docs/verification.md#журнал-приёмки). Флаг проверяет ключ `--mode` у `python3 .handoff/handoff.py start`. Статус этапов ведёт [progress.md](chebu-tutor-docs/progress.md).
 
 ## Генератор
 
