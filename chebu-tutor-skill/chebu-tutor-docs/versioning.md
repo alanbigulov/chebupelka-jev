@@ -70,10 +70,21 @@ git tag --list 'v*'
 4. Выполнить тесты навыка и тесты `.handoff`. Все должны пройти.
 5. Перенести записи из `[Unreleased]` в раздел новой версии CHANGELOG навыка. Добавить строку о выпуске в CHANGELOG проекта.
 6. Записать в CHANGELOG навыка, в каких рантаймах выпуск прошёл приёмку и с каким результатом. Строки берутся из [verification.md](verification.md).
-7. Получить разрешение владельца, создать коммит выпуска и аннотированный тег на нём, отправить ветку и тег.
-8. Сверить локальный и удалённый коммит, включая коммит под тегом:
+7. Получить разрешение владельца на коммит, push, PR и тег.
+8. Создать коммит выпуска в ветке, отправить ветку и открыть PR. Владелец сливает PR через squash, и коммит выпуска получает в `main` новый SHA. Поэтому до слияния тег не ставится (D-28).
+9. После слияния поставить аннотированный тег на коммит слияния и отправить тег. Коммит слияния называет `gh pr view <номер PR> -R alanbigulov/chebupelka-jev --json mergeCommit`:
+
+```bash
+git fetch origin
+git tag -a chebu-tutor-vX.Y.Z <коммит слияния> -m "chebu-tutor X.Y.Z"
+git push origin chebu-tutor-vX.Y.Z
+```
+
+10. Сверить локальный и удалённый коммит под тегом с коммитом слияния:
 
 ```bash
 git rev-parse chebu-tutor-vX.Y.Z^{commit}
-git ls-remote --tags origin chebu-tutor-vX.Y.Z
+git ls-remote origin refs/tags/chebu-tutor-vX.Y.Z 'refs/tags/chebu-tutor-vX.Y.Z^{}'
 ```
+
+Строка с `^{}` в выводе `ls-remote` называет коммит под тегом на origin.

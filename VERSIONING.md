@@ -75,6 +75,10 @@ git ls-remote origin refs/heads/main refs/tags/v0.1.4 'refs/tags/v0.1.4^{}'
 
 Для каждого выпуска сверяем критерии issues его состава, записываем доказательства, закрываем выполненные issues и явно проверяем их Status Готово. В составе v0.1.4 это #18, #19 и #20. Milestone v0.1.4 закрывается при нуле открытых задач согласованного состава. Открытые задачи v0.1.5 остаются в бэклоге; для этих действий не передвигаем Git-тег.
 
+## Версия навыка chebu-tutor
+
+Навык `chebu-tutor` выпускается отдельно от `chebu`. Номер навыка хранит `chebu-tutor-skill/skill.json`, теги навыка имеют префикс `chebu-tutor-v`: первый выпуск `chebu-tutor-v0.1.0`. Выпуск навыка не меняет `agent/pyproject.toml` и не создаёт тег `vX.Y.Z`. Правила номеров и чек-лист выпуска навыка описывает [versioning.md](chebu-tutor-skill/chebu-tutor-docs/versioning.md), изменения ведёт [CHANGELOG навыка](chebu-tutor-skill/CHANGELOG.md).
+
 ## Уроки и стабильные ссылки
 
 В [уроках v0.1.0](coding-agent-developement/lessons-v0.1.0/01-setup-and-history.md) ссылки на код и настройки закреплены за исходным коммитом. [Исходник по тегу v0.1.0](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.0/chebupelkajev.py) находится в корне. [Исходник v0.1.1](https://github.com/alanbigulov/chebupelka-jev/blob/v0.1.1/agent/chebupelkajev.py) находится в `agent/`. В тегах v0.1.0–v0.1.2 файл называется `chebupelkajev.py`; начиная с v0.1.3 исходник называется `agent/chebu.py`. Номера строк относятся к изучаемому выпуску.
