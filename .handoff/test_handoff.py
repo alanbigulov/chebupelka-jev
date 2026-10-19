@@ -44,6 +44,13 @@ def set_field(text: str, field: str, value: str) -> str:
     return row.sub(lambda _: f"| {field} | {value} |", text)
 
 
+def shell_message(command: str) -> str:
+    """Return the last argument that sh hands to the program named at the start of command."""
+    _, arguments = command.strip().split(" ", 1)
+    script = 'last() { for word in "$@"; do message=$word; done; printf %s "$message"; }; last ' + arguments
+    return subprocess.run(["sh", "-c", script], capture_output=True, text=True, check=True).stdout
+
+
 def drop_field(text: str, field: str) -> str:
     row = re.compile(rf"^\| {re.escape(field)} \|.*\n", flags=re.MULTILINE)
     assert row.search(text), f"no metadata row {field!r} in the template"
@@ -495,19 +502,21 @@ class SaveTest(HandoffCase):
         self.assertFalse(self.archive.exists())
         self.assertFalse(self.prepared.exists())
 
-    def test_prints_start_command_for_every_registry_runtime(self) -> None:
-        self.prepared.write_text(filled_snapshot(), encoding="utf-8")
+    def test_prints_skill_command_with_the_saved_mode_for_every_registry_runtime(self) -> None:
+        self.prepared.write_text(set_field(filled_snapshot(), MODE_FIELD, "`quiz`"), encoding="utf-8")
 
         result = self.run_script("save")
 
         lines = result.stdout.splitlines()
         self.assertIn(RESUME_HEADER, lines, output(result))
-        expected = [
-            "  " + RUNTIMES[runtime_id]["commands"]["start"].replace("{prompt}", MANIFEST["resume_prompt"])
-            for runtime_id in MANIFEST["runtimes"]
-        ]
-        self.assertEqual(lines[lines.index(RESUME_HEADER) + 1 :], expected)
-        self.assertNotIn("{prompt}", result.stdout)
+        first = lines.index(RESUME_HEADER) + 1
+        last = first + len(MANIFEST["runtimes"])
+        commands = lines[first:last]
+        # Codex mentions a skill with $, the other five runtimes with /.
+        expected = [("$" if i == "codex" else "/") + "chebu-tutor --quiz" for i in MANIFEST["runtimes"]]
+        self.assertEqual([shell_message(command) for command in commands], expected)
+        self.assertEqual([command.split()[0] for command in commands], [RUNTIMES[i]["cli"] for i in MANIFEST["runtimes"]])
+        self.assertEqual(lines[last:], [f"Без навыка: «{MANIFEST['resume_prompt']}»"])
 
 
 class StartTest(HandoffCase):

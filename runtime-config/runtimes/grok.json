@@ -9,7 +9,8 @@
   "commands": {
     "start": "grok \"{prompt}\"",
     "headless": "grok -p \"{prompt}\"",
-    "continue": "grok --continue"
+    "continue": "grok --continue",
+    "resume": "grok \"/chebu-tutor --{mode}\""
   },
   "skill": {
     "dir": ".claude/skills/chebu-tutor"
@@ -25,7 +26,8 @@
       "Приёмка навыка chebu-tutor 0.1.0 2026-10-18: девять случаев матрицы из chebu-tutor-skill/chebu-tutor-docs/verification.md прошли в grok -p 1.0.62 с итогом «Проверено»."
     ],
     "unconfirmed": [
-      "Распознавание без ключа --runtime в сессии Grok не запускалось. Значение GROK_SESSION_ID не читалось."
+      "Распознавание без ключа --runtime в сессии Grok не запускалось. Значение GROK_SESSION_ID не читалось.",
+      "Команда resume не запускалась: подхватывает ли сессия, открытая этой командой, навык chebu-tutor, не наблюдалось."
     ]
   }
 }

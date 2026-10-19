@@ -58,7 +58,7 @@ class Runtime:
     aliases: tuple[str, ...]
     entry_files: tuple[str, ...]
     detect_env: tuple[str, ...]
-    start_command: str
+    resume_command: str
     unconfirmed: tuple[str, ...]
 
     @property
@@ -117,7 +117,7 @@ def load_runtime(path: Path, runtime_id: str) -> Runtime:
             aliases=tuple(data["aliases"]),
             entry_files=tuple(data["entry_files"]),
             detect_env=tuple(data["detect_env"]),
-            start_command=data["commands"]["start"],
+            resume_command=data["commands"]["resume"],
             unconfirmed=tuple(data["checked"]["unconfirmed"]),
         )
 
@@ -692,7 +692,8 @@ def cmd_save(args: argparse.Namespace) -> int:
     print(archive_note)
     print("Продолжить в любом рантайме из корня основного клона:")
     for runtime in registry.runtimes:
-        print("  " + runtime.start_command.replace("{prompt}", registry.resume_prompt))
+        print("  " + runtime.resume_command.replace("{mode}", prepared.value(MODE_FIELD)))
+    print(f"Без навыка: «{registry.resume_prompt}»")
     return 0
 
 

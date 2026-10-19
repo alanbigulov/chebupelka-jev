@@ -9,7 +9,8 @@
   "commands": {
     "start": "claude \"{prompt}\"",
     "headless": "claude -p \"{prompt}\"",
-    "continue": "claude --continue"
+    "continue": "claude --continue",
+    "resume": "claude \"/chebu-tutor --{mode}\""
   },
   "skill": {
     "dir": ".claude/skills/chebu-tutor"
@@ -24,6 +25,8 @@
       "В эстафете 2026-10-13 команда start без ключа --runtime распознала рантайм по CLAUDECODE. В сессиях остальных пяти рантаймов этой переменной нет.",
       "Приёмка навыка chebu-tutor 0.1.0 2026-10-18: девять случаев матрицы из chebu-tutor-skill/chebu-tutor-docs/verification.md прошли в claude -p 2.1.302 с итогом «Проверено»."
     ],
-    "unconfirmed": []
+    "unconfirmed": [
+      "Команда resume не запускалась: подхватывает ли сессия, открытая этой командой, навык chebu-tutor, не наблюдалось."
+    ]
   }
 }

@@ -9,7 +9,8 @@
   "commands": {
     "start": "codex \"{prompt}\"",
     "headless": "codex exec \"{prompt}\"",
-    "continue": "codex resume --last"
+    "continue": "codex resume --last",
+    "resume": "codex '$chebu-tutor --{mode}'"
   },
   "skill": {
     "dir": ".agents/skills/chebu-tutor",
@@ -27,7 +28,8 @@
       "Приёмка навыка chebu-tutor 0.1.0 2026-10-18: девять случаев матрицы из chebu-tutor-skill/chebu-tutor-docs/verification.md прошли в codex exec 0.163.0 с итогом «Проверено», случай C при повторе."
     ],
     "unconfirmed": [
-      "Распознавание без ключа --runtime в сессии Codex не запускалось. Значение CODEX_THREAD_ID не читалось."
+      "Распознавание без ключа --runtime в сессии Codex не запускалось. Значение CODEX_THREAD_ID не читалось.",
+      "Команда resume не запускалась: подхватывает ли сессия, открытая этой командой, навык chebu-tutor, не наблюдалось."
     ]
   }
 }

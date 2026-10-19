@@ -9,7 +9,8 @@
   "commands": {
     "start": "opencode --prompt \"{prompt}\"",
     "headless": "opencode run \"{prompt}\"",
-    "continue": "opencode --continue"
+    "continue": "opencode --continue",
+    "resume": "opencode --prompt \"/chebu-tutor --{mode}\""
   },
   "skill": {
     "dir": ".claude/skills/chebu-tutor"
@@ -26,7 +27,8 @@
       "Приёмка навыка chebu-tutor 0.1.0 2026-10-18: девять случаев матрицы из chebu-tutor-skill/chebu-tutor-docs/verification.md прошли в OpenCode 2.0.32 с итогом «Проверено». Навык вызывал session.prompt с полем skills через API сервера opencode serve, команда opencode run \"/chebu-tutor …\" навык не загрузила."
     ],
     "unconfirmed": [
-      "Распознавание без ключа --runtime в сессии OpenCode не запускалось. Значение OPENCODE не читалось."
+      "Распознавание без ключа --runtime в сессии OpenCode не запускалось. Значение OPENCODE не читалось.",
+      "Команда resume не запускалась: подхватывает ли сессия, открытая этой командой, навык chebu-tutor, не наблюдалось."
     ]
   }
 }

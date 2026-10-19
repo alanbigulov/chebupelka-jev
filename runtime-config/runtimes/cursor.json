@@ -9,7 +9,8 @@
   "commands": {
     "start": "cursor-agent \"{prompt}\"",
     "headless": "cursor-agent -p \"{prompt}\"",
-    "continue": "cursor-agent --continue"
+    "continue": "cursor-agent --continue",
+    "resume": "cursor-agent \"/chebu-tutor --{mode}\""
   },
   "skill": {
     "dir": ".claude/skills/chebu-tutor"
@@ -26,7 +27,8 @@
     ],
     "unconfirmed": [
       "Распознавание без ключа --runtime в сессии Cursor не запускалось. Значение CURSOR_AGENT не читалось.",
-      "Агент внутри приложения Cursor не проверялся; конфигурация описывает CLI."
+      "Агент внутри приложения Cursor не проверялся; конфигурация описывает CLI.",
+      "Команда resume не запускалась: подхватывает ли сессия, открытая этой командой, навык chebu-tutor, не наблюдалось."
     ]
   }
 }

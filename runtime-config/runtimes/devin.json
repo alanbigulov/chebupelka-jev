@@ -9,7 +9,8 @@
   "commands": {
     "start": "devin -- \"{prompt}\"",
     "headless": "devin -p \"{prompt}\"",
-    "continue": "devin --continue"
+    "continue": "devin --continue",
+    "resume": "devin -- \"/chebu-tutor --{mode}\""
   },
   "skill": {
     "dir": ".claude/skills/chebu-tutor"
@@ -26,7 +27,8 @@
     ],
     "unconfirmed": [
       "Есть ли у Devin своя переменная для распознавания, не установлено. Полный список имён окружения не снимался. Имя AI_AGENT в сессии есть, значение не читалось. В сессии Claude Code значение AI_AGENT содержит слово claude.",
-      "Облачные сессии Devin не видят локальную .handoff/ и в протокол не входят."
+      "Облачные сессии Devin не видят локальную .handoff/ и в протокол не входят.",
+      "Команда resume не запускалась: подхватывает ли сессия, открытая этой командой, навык chebu-tutor, не наблюдалось."
     ]
   }
 }
