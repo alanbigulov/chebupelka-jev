@@ -30,6 +30,10 @@ TIME_FIELD = "Время снимка UTC"
 RUNTIME_FIELD = "Рантайм"
 MODE_FIELD = "Режим тьютора"
 ARGUMENTS_PLACEHOLDER = "$ARGUMENTS"
+SKILL_CALL_HINT = (
+    "Если ученик вызвал навык chebu-tutor, эта команда не та: "
+    "выполни команду проверки из шага 2 .claude/skills/chebu-tutor/SKILL.md с ключом --mode."
+)
 SENDER_FIELD_PREFIX = "Отправитель"
 UNKNOWN_RUNTIME = "unknown"
 TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
@@ -606,6 +610,8 @@ def cmd_start(args: argparse.Namespace) -> int:
     layout = discover_layout()
     lines += [f"Состояние: {layout.state_dir}", f"Рабочая копия: {layout.working_copy}"]
     lines += state_briefing(layout, registry, flag)
+    if not args.mode:
+        lines.append(SKILL_CALL_HINT)
     print("\n".join(lines))
     return 0
 
