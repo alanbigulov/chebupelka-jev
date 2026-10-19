@@ -26,11 +26,10 @@
       "Имя OPENCODE_CONFIG_DIR есть в сессии Claude Code, имя ORCA_OPENCODE_AGENT есть в сессиях Grok, Cursor и Devin. Признаком OpenCode они не служат.",
       "Приёмка навыка chebu-tutor 0.1.0 2026-10-18: девять случаев матрицы из chebu-tutor-skill/chebu-tutor-docs/verification.md прошли в OpenCode 2.0.32 с итогом «Проверено». Навык вызывал session.prompt с полем skills через API сервера opencode serve, команда opencode run \"/chebu-tutor …\" навык не загрузила.",
       "Команда resume 2026-10-19 в 2.0.32: владелец запустил opencode --prompt \"/chebu-tutor --execute\" из shell в корне основного клона. start с --mode напечатал «Режим тьютора: execute, из снимка и флага».",
-      "Навык 0.1.1 на 36c3bcb 2026-10-19, сообщение /chebu-tutor --execute в TUI в worktree, сессия ses_eabb7eaadffe6kfpuhv2KeqDHd в opencode.db. Сообщение ушло без вложения навыка. Модель в одном ходе прочитала SKILL.md и выполнила start --runtime opencode без --mode, следующим ходом сама повторила проверку с --execute и получила «Режим тьютора: execute, из снимка и флага»."
+      "Навык 0.1.1 на 36c3bcb 2026-10-19, сообщение /chebu-tutor --execute в TUI в worktree, сессия ses_eabb7eaadffe6kfpuhv2KeqDHd в opencode.db. Сообщение ушло без вложения навыка. Модель в одном ходе прочитала SKILL.md и выполнила start --runtime opencode без --mode, следующим ходом сама повторила проверку с --execute и получила «Режим тьютора: execute, из снимка и флага».",
+      "С подсказкой start без --mode и новым шагом 1 AGENTS.md (D-31) на 9bc037b 2026-10-19, сообщение /chebu-tutor --execute в TUI, сессия ses_eaba9bbd9ffePazvL5R1I6OsRu: модель сначала прочитала SKILL.md, затем первой командой выполнила start --runtime opencode --mode с --execute. Вывод: «Режим тьютора: execute, из снимка и флага», файлы не менялись."
     ],
     "unconfirmed": [
-      "Распознавание без ключа --runtime в сессии OpenCode не запускалось. Значение OPENCODE не читалось.",
-      "С подсказкой start без --mode и новым шагом 1 AGENTS.md (D-31) OpenCode не запускался."
-    ]
+      "Распознавание без ключа --runtime в сессии OpenCode не запускалось. Значение OPENCODE не читалось."    ]
   }
 }
