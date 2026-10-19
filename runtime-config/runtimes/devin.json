@@ -24,12 +24,13 @@
       "Сессия загружает AGENTS.md сама. В эстафете 2026-10-13 она выполнила handoff.py start первой командой и перед этим файл не читала.",
       "В сессии эстафеты 2026-10-13 поиск по именам переменных окружения не нашёл имён с подстроками devin, cognition, swe и windsurf. Рантайм называется ключом --runtime devin.",
       "Приёмка навыка chebu-tutor 0.1.0 2026-10-18: девять случаев матрицы из chebu-tutor-skill/chebu-tutor-docs/verification.md прошли в devin -p 3000.11.92 с ключом --sandbox с итогом «Проверено», случаи B, C и G при повторе. Без интерфейса запись инструментами edit и write потребовала правил Write(...) в .devin/config.local.json.",
-      "Навык chebu-tutor 0.1.0 в 3000.11.92 2026-10-19, два запуска владельца: devin -- \"/chebu-tutor --execute\" с DeepSeek V4.1 Flash Max и /chebu-tutor --execute, набранный в открытой сессии с SWE-2 High. В обоих Devin передал модели тело навыка сообщением пользователя с --execute в heredoc: сессии furtive-steed и powerful-search в ~/.local/share/devin/cli. Обе модели выполнили start без --mode по шагу 1 «Начни сессию» AGENTS.md. После первого запуска Devin завершил ход ошибкой «An internal error occurred»."
+      "Навык chebu-tutor 0.1.0 в 3000.11.92 2026-10-19, два запуска владельца: devin -- \"/chebu-tutor --execute\" с DeepSeek V4.1 Flash Max и /chebu-tutor --execute, набранный в открытой сессии с SWE-2 High. В обоих Devin передал модели тело навыка сообщением пользователя с --execute в heredoc: сессии furtive-steed и powerful-search в ~/.local/share/devin/cli. Обе модели выполнили start без --mode по шагу 1 «Начни сессию» AGENTS.md. После первого запуска Devin завершил ход ошибкой «An internal error occurred».",
+      "Навык 0.1.1 на 3884e70 2026-10-19: devin -- \"/chebu-tutor --execute\" из worktree, сессия necessary-sawfish. Модель DeepSeek V4.1 Flash Max первой проверочной командой выполнила start --runtime devin --mode, но передала в heredoc --guide вместо --execute. Вывод: «Режим тьютора: guide по флагу, в снимке был execute»."
     ],
     "unconfirmed": [
       "Есть ли у Devin своя переменная для распознавания, не установлено. Полный список имён окружения не снимался. Имя AI_AGENT в сессии есть, значение не читалось. В сессии Claude Code значение AI_AGENT содержит слово claude.",
       "Облачные сессии Devin не видят локальную .handoff/ и в протокол не входят.",
-      "Команда resume с навыком chebu-tutor 0.1.1 не запускалась. В 0.1.1 шаг 2 навыка сам называет id рантайма и запрещает start без --mode."
+      "Команда resume с окончательным текстом навыка 0.1.1 не запускалась: в нём шаг 2 ещё требует передать строку между разделителями без изменений и сверить флаг по строке режима."
     ]
   }
 }

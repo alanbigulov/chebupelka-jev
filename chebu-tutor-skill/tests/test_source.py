@@ -74,6 +74,13 @@ class SourceTest(unittest.TestCase):
         for runtime_id in manifest["runtimes"]:
             self.assertIn(f"`{runtime_id}`", step, runtime_id)
 
+    def test_check_step_keeps_the_words_and_checks_the_flag_it_gets_back(self) -> None:
+        # With 0.1.1 Devin's model ran the check with --guide although the heredoc held --execute.
+        step = next(line for line in self.body.splitlines() if line.startswith("2. "))
+        self.assertIn(f"Строку между разделителями `{DELIMITER}` передай без изменений", step)
+        self.assertIn("`Режим тьютора:`", step)
+        self.assertIn("повтори команду с исходной строкой", step)
+
     def test_arguments_placeholder_is_the_only_line_inside_the_heredoc(self) -> None:
         self.assertEqual(self.body.count(PLACEHOLDER), 1, PLACEHOLDER)
         self.assertNotRegex(self.body, r"\$\d|\$\{", "positional or braced substitution")
