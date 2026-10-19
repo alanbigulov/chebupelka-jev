@@ -55,7 +55,7 @@
 | `start --runtime <id>` | Печатает рантайм, его конфигурацию, путь к состоянию, рабочую копию, сводку снимка с полями-перечислениями, архив и раздел протокола, который читать дальше | 0. Код 2, если id нет в реестре, если без ключа рантайм не распознан и при неверных аргументах | Строка `Режим тьютора: <id>` содержит режим из снимка. `start --runtime unknown` печатает `Рантайм: неизвестен (unknown)` и завершается с кодом 0 |
 | `start --runtime <id> --mode` | Читает слова вызова навыка из stdin и проверяет флаг режима до брифинга. Затем печатает тот же брифинг, где строка режима сравнивает флаг со снимком. Без флага сначала печатает строку использования | 0. Код 2 при двух флагах или флаге вне списка: в stderr причина и строка использования, stdout пуст | Исполняет ENF-001. Ключ добавлен на этапе 3 (D-16), интерфейс описан в [контракте](contract.md#команда-проверки) |
 | `check [ПУТЬ]` | Проверяет снимок по шаблону. Без пути берёт `SESSION.next.md` | 0 или 1 | Режим в снимке должен входить в перечисление шаблона |
-| `save` | Проверяет `SESSION.next.md`, убирает прежний `SESSION.md` в `archive/`, ставит новый снимок и печатает команды продолжения для шести рантаймов | 0 или 1 | Команды продолжения рассчитаны на корень основного клона |
+| `save` | Проверяет `SESSION.next.md`, убирает прежний `SESSION.md` в `archive/`, ставит новый снимок и печатает команды продолжения для шести рантаймов | 0 или 1 | Команды продолжения рассчитаны на корень основного клона. С 2026-10-19 каждая вызывает навык с режимом сохранённого снимка, последняя строка называет промпт для сессии без навыка |
 
 [test_handoff.py](../../.handoff/test_handoff.py) содержит 74 теста, из них 11 в классе `ModeTest` проверяют ключ `--mode`. Запуск из корня:
 
@@ -67,7 +67,7 @@ python3 -m unittest discover -s .handoff -p 'test_*.py' -v
 
 ## Реестр рантаймов
 
-[manifest.json](../../runtime-config/manifest.json) хранит схему, промпт продолжения `resume_prompt` и список id: `claude`, `codex`, `cursor`, `devin`, `grok`, `opencode`. Каждый id описан своим файлом:
+[manifest.json](../../runtime-config/manifest.json) хранит схему, запасной промпт продолжения `resume_prompt` для сессии без навыка и список id: `claude`, `codex`, `cursor`, `devin`, `grok`, `opencode`. Каждый id описан своим файлом:
 
 | Рантайм | Файл |
 |---|---|
@@ -78,7 +78,7 @@ python3 -m unittest discover -s .handoff -p 'test_*.py' -v
 | Grok Build | [grok.json](../../runtime-config/runtimes/grok.json) |
 | OpenCode | [opencode.json](../../runtime-config/runtimes/opencode.json) |
 
-Поля файла рантайма: `schema`, `id`, `name`, `aliases`, `cli`, `entry_files`, `detect_env`, `commands` (`start`, `headless`, `continue`) и `checked` (`date`, `cli_version`, `confirmed`, `unconfirmed`). Функция `load_runtime` в `handoff.py` читает только `id`, `name`, `aliases`, `entry_files`, `detect_env`, `commands.start` и `checked.unconfirmed`. Остальные ключи она пропускает, поэтому новый блок с фактами об адаптере навыка `handoff.py` не ломает.
+Поля файла рантайма: `schema`, `id`, `name`, `aliases`, `cli`, `entry_files`, `detect_env`, `commands` (`start`, `headless`, `continue`, `resume`) и `checked` (`date`, `cli_version`, `confirmed`, `unconfirmed`). Шаблон `commands.resume` с подстановкой `{mode}` вызывает навык и добавлен 2026-10-19. Функция `load_runtime` в `handoff.py` читает только `id`, `name`, `aliases`, `entry_files`, `detect_env`, `commands.resume` и `checked.unconfirmed`. Остальные ключи она пропускает, поэтому новый блок с фактами об адаптере навыка `handoff.py` не ломает.
 
 Этап 4 добавил в каждый файл блок `skill`: поле `dir` и у Codex поле `link_to` (D-21). Блок читает только генератор `chebu-tutor-skill/tools/sync.py`. Список id генератор получает через `load_registry` из `handoff.py`, поэтому рантайм из `manifest.json` без блока `skill` роняет `--check`.
 
